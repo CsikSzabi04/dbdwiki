@@ -1,0 +1,85 @@
+@import "tailwindcss";
+
+@theme {
+  --color-dbd-red: #8b0000;
+  --color-dbd-red-light: #b30000;
+  --color-obsidian: #0a0a0a;
+  --color-dark-gray: #1a1a1a;
+  --color-fog: #333333;
+  --color-smoke: #a1a1a1;
+
+  --font-display: "Outfit", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-obsidian text-slate-200 font-body selection:bg-dbd-red selection:text-white;
+    background-image:
+      radial-gradient(circle at 50% -20%, rgba(139, 0, 0, 0.15), transparent 60%),
+      linear-gradient(to bottom, #0a0a0a, #050505);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display font-bold tracking-tight text-white;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden transition-all duration-300;
+  }
+
+  .glass-card:hover {
+    @apply border-white/20 bg-white/10 shadow-lg shadow-black/40;
+  }
+
+  .dbd-button {
+    @apply px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .dbd-button-primary {
+    @apply px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply bg-dbd-red text-white hover:bg-dbd-red-light hover:shadow-lg hover:shadow-red-900/40;
+  }
+
+  .dbd-button-outline {
+    @apply px-6 py-2.5 rounded-xl font-semibold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply border border-dbd-red text-dbd-red hover:bg-dbd-red hover:text-white;
+  }
+
+  .dbd-input {
+    @apply w-full bg-obsidian border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-smoke/50 focus:outline-none focus:ring-2 focus:ring-dbd-red/50 focus:border-dbd-red/50 transition-all duration-300;
+  }
+
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-smoke hover:text-white hover:bg-white/5 transition-all duration-200;
+  }
+
+  .nav-link.active {
+    @apply bg-dbd-red/10 text-dbd-red border-r-4 border-dbd-red rounded-r-none;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-obsidian;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-fog rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-smoke;
+}
