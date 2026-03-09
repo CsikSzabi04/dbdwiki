@@ -11,7 +11,7 @@ export const useCharacters = () => {
         const fetchCharacters = async () => {
             try {
                 setLoading(true);
-               
+                // We still fetch from API to get any characters not in our local JSON
 
                 // 1. Process Survivors from Local JSON
                 const survivors = survivorsData.map(survivor => ({
@@ -63,31 +63,10 @@ export const useCharacters = () => {
                     return aliases[n] || n;
                 };
 
-                // 3. Process any EXTRA characters from API that are not in our JSON
-                const localNames = new Set([...survivors, ...killers].map(c => normalizeName(c.name)));
 
-                const extraCharacters = Object.values(apiData)
-                    .filter(char => {
-                        return !localNames.has(normalizeName(char.name));
-                    })
-                    .map(char => ({
-                        ...char,
-                        // Make sure API characters have a consistent structure
-                        difficulty: char.difficulty || 'intermediate',
-                        role: char.role || (char.power ? 'killer' : 'survivor'),
-                        perks: char.perks || [],
-                        overview: char.description || '',
-                        backstory: char.story || '',
-                        // Use the official image path from API, prefixed with proxy
-                        // Most tricky.lol assets are under /dbdassets/
-                        imageUrl: char.image
-                            ? `/api-tricky/dbdassets/${char.image}`
-                            : `/api-tricky/assets/portraits/${char.id}.png`,
-                        isLocal: false
-                    }));
 
                 // 4. Combine all
-                setCharacters([...killers, ...survivors, ...extraCharacters]);
+                setCharacters([...killers, ...survivors]);
             } catch (err) {
                 console.error("Error fetching characters:", err);
                 // Fallback to local data only
@@ -109,4 +88,3 @@ export const useCharacters = () => {
 
     return { characters, loading, error };
 };
-
