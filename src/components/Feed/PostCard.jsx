@@ -109,16 +109,21 @@ const PostCard = ({ post }) => {
   const handleLike = async (e) => {
     e.stopPropagation();
 
+    if (!user) {
+      toast.error('You must be in the Fog to like posts. Sign in or Sign up!', {
+        icon: '🔒',
+        duration: 3000
+      });
+      return;
+    }
+
     // Optimistic update
     const currentlyLiked = isLiked;
     setIsLiked(!currentlyLiked);
     setLikesCount(prev => currentlyLiked ? prev - 1 : prev + 1);
 
     try {
-      await toggleLikePost(post.id, effectiveUid, currentlyLiked);
-      if (!user && !currentlyLiked) {
-        toast.success('Liked as bot@gmail.com! 🤖', { icon: '🤖', duration: 1500 });
-      }
+      await toggleLikePost(post.id, user.uid, currentlyLiked);
     } catch (error) {
       setIsLiked(currentlyLiked);
       setLikesCount(prev => currentlyLiked ? prev + 1 : prev - 1);
