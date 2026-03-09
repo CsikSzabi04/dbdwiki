@@ -1,7 +1,4 @@
 {
-    "buildCommand": "npm run build",
-    "outputDirectory": "build",
-    "devCommand": "npm start",
     "rewrites": [
         {
             "source": "/(.*)",
