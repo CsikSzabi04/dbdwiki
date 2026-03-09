@@ -27,8 +27,7 @@ function App() {
         <div className="min-h-screen bg-obsidian text-white">
           <Toaster position="bottom-right" />
           <Routes>
-            <Route path="/" element={<Navigate to="/home" replace />} />
-            <Route path="/home" element={<HomePage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/wiki" element={<WikiPage />} />

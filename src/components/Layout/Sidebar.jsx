@@ -28,7 +28,7 @@ const Sidebar = () => {
     };
 
     const navItems = [
-        { name: 'Home', icon: HomeIcon, path: '/home' },
+        { name: 'Home', icon: HomeIcon, path: '/' },
         { name: 'News', icon: NewspaperIcon, path: '/news' },
         { name: 'Wiki', icon: BookOpenIcon, path: '/wiki' },
         { name: 'Builds', icon: BeakerIcon, path: '/builds' },

@@ -1,0 +1,6 @@
+# Firebase hívások kivétele
+/__/*                   /__/:splat                  200
+/firebase/*             /firebase/:splat            200
+
+# Minden más menjen az index.html-re
+/*                      /index.html                  200
