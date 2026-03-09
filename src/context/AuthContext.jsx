@@ -7,7 +7,7 @@ import {
     signOut,
     updateProfile
 } from 'firebase/auth';
-import { getUserProfile, createUserProfile, updateUserAvatar } from '../firebase/users';
+import { getUserProfile, createUserProfile, updateUserAvatar, updateUserProfile } from '../firebase/users';
 import { AuthContext } from './AuthContextInstance';
 
 export const AuthProvider = ({ children }) => {
@@ -91,12 +91,47 @@ export const AuthProvider = ({ children }) => {
     };
 
 
+    const updateProfileInfo = async (updates) => {
+        if (!user) throw new Error("No user logged in");
+
+        // Update Firestore
+        await updateUserProfile(user.uid, updates);
+
+        // Update Firebase Auth if display name changed
+        if (updates.displayName) {
+            await updateProfile(user, { displayName: updates.displayName });
+        }
+
+        // Update local state
+        setUserProfile(prev => prev ? {
+            ...prev,
+            ...updates
+        } : prev);
+    };
+
+    const updateAvatar = async (photoURL) => {
+        if (!user) throw new Error("No user logged in");
+
+        await updateUserAvatar(user.uid, photoURL, user.email);
+
+        // Update Firebase Auth profile
+        await updateProfile(user, { photoURL });
+
+        // Update local state
+        setUserProfile(prev => prev ? {
+            ...prev,
+            photoURL
+        } : prev);
+    };
+
     const value = {
         user,
         userProfile,
         signup,
         login,
         logout,
+        updateAvatar,
+        updateProfileInfo,
         loading
     };
 

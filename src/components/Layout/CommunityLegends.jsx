@@ -54,6 +54,37 @@ const CommunityLegends = () => {
         }
     ];
 
+    // YouTube creators
+    const youtubeCreators = [
+        {
+            channelId: 'notOtzdarva',
+            displayName: 'notOtzdarva',
+            handle: '@notOtzdarva',
+            subscribers: '847K',
+            category: 'Educational',
+            channelUrl: 'https://www.youtube.com/@notOtzdarva',
+            avatarUrl: 'https://yt3.googleusercontent.com/CPV5nRrssy6_y_tEZ2NRhKSQOTh8vtfNVsCDqeKqt-fYHjVQ-7ela9nUFhy0p5FJvPOUl5o8qjQ=s160-c-k-c0x00ffffff-no-rj'
+        },
+        {
+            channelId: 'TheJRM',
+            displayName: 'JRM',
+            handle: '@TheJRM',
+            subscribers: '312K',
+            category: 'Gameplay',
+            channelUrl: 'https://www.youtube.com/@TheJRM/videos',
+            avatarUrl: 'https://yt3.googleusercontent.com/_PmFMfG7AYugmut_L68JpLdGuM02f35patcewjZItxYbPIEEp2A2Wlzcm56nKVi1j00MvOXFwA=s160-c-k-c0x00ffffff-no-rj'
+        },
+        {
+            channelId: 'Hens',
+            displayName: 'Hens333',
+            handle: '@Hens333',
+            subscribers: '203K',
+            category: 'Gameplay',
+            channelUrl: 'https://www.youtube.com/@hens333/videos',
+            avatarUrl: 'https://yt3.googleusercontent.com/Je1bIJuvhva9x6003FP8GNdWAwrAJ2Ka8oeKvc-9Yepat_EIsYB9OLfmt4gwfzHT8rdyVEsAYQ=s160-c-k-c0x00ffffff-no-rj'
+        }
+    ];
+
     return (
         <div className="flex flex-col gap-4 h-full">
             {/* What's New Section - Kompaktabb változat */}
@@ -99,13 +130,98 @@ const CommunityLegends = () => {
             </div>
 
             {/* Scrollable Community Content */}
-            <div className="relative flex-1 min-h-0">
+            <div className="relative flex-1 min-h-0 overflow: hidden;" >
                 {/* Scrollable Container */}
                 <div
                     ref={scrollContainerRef}
                     className="space-y-4 overflow-y-auto pr-1 custom-scrollbar"
-                    style={{ maxHeight: 'calc(100vh - 280px)' }}
+                    style={{
+                        maxHeight: 'calc(100vh - 280px)',
+                        scrollbarWidth: 'none',  /* Firefox */
+                        msOverflowStyle: 'none',  /* IE/Edge */
+                        WebkitOverflowScrolling: 'touch'  /* Smooth scrolling iOS */
+                    }}
                 >
+                    {/* YouTube Creators Section - ÚJ */}
+                    <div className="glass-card p-4 relative overflow-hidden group">
+                        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-red-600 to-red-800 opacity-50" />
+
+                        <div className="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-3 bg-red-600 rounded-full"></div>
+                                <h3 className="text-base font-black uppercase italic tracking-tighter text-white">YouTube Legends</h3>
+                            </div>
+                            <span className="text-[8px] text-smoke bg-white/5 px-1.5 py-0.5 rounded-full border border-white/10">
+                                3 creators
+                            </span>
+                        </div>
+
+                        <div className="flex flex-col gap-3">
+                            <p className="text-[10px] text-smoke/80 font-medium leading-relaxed">
+                                Top DBD content creators on YouTube. Watch their latest videos and guides.
+                            </p>
+
+                            {/* YouTube Creators Grid */}
+                            <div className="grid grid-cols-1 gap-2">
+                                {youtubeCreators.map((creator, index) => (
+                                    <a
+                                        key={index}
+                                        href={creator.channelUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-3 p-2 bg-black/40 rounded-lg border border-white/5 hover:border-red-600/30 transition-all group"
+                                    >
+                                        {/* YouTube profil kép */}
+                                        <div className="relative">
+                                            <div className="w-10 h-10 rounded-full bg-red-900/30 flex items-center justify-center border-2 border-red-600/30 shrink-0 overflow-hidden group-hover:border-red-600/60 transition-all">
+                                                <img
+                                                    src={creator.avatarUrl}
+                                                    alt={creator.displayName}
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        e.target.onerror = null;
+                                                        e.target.style.display = 'none';
+                                                        e.target.parentElement.innerHTML = `<span class="text-lg font-black italic text-white">${creator.displayName.charAt(0)}</span>`;
+                                                    }}
+                                                />
+                                            </div>
+                                            {/* YouTube logo badge */}
+                                            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center border border-black">
+                                                <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <div className="min-w-0 flex-1">
+                                            <div className="flex items-center gap-1 flex-wrap">
+                                                <p className="text-xs font-bold text-white uppercase tracking-wider truncate">
+                                                    {creator.displayName}
+                                                </p>
+                                                <span className="text-[8px] text-red-400 bg-red-500/10 px-1.5 py-0.5 rounded-full border border-red-500/20">
+                                                    {creator.category}
+                                                </span>
+                                            </div>
+                                            <p className="text-[9px] text-smoke truncate">{creator.handle}</p>
+                                            <div className="flex items-center gap-1 mt-0.5">
+                                                <span className="text-[8px] text-red-400 font-bold">{creator.subscribers}</span>
+                                                <span className="text-[6px] text-smoke">subscribers</span>
+                                            </div>
+                                        </div>
+
+                                        {/* YouTube indikátor */}
+                                        <div className="shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+                                            <svg className="w-5 h-5 text-red-600" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+                                            </svg>
+                                        </div>
+                                    </a>
+                                ))}
+                            </div>
+
+                        </div>
+                    </div>
+
                     {/* Community Legend / Featured Streamer Section */}
                     <div className="glass-card p-4 relative overflow-hidden group">
                         <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-purple-500 to-dbd-red opacity-50" />

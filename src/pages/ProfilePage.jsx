@@ -28,8 +28,13 @@ const allAvatars = [...survivorsData, ...killersData]
 const ProfilePage = () => {
     const { user, userProfile, loading, updateAvatar } = useAuth();
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
+    const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
+    const [editForm, setEditForm] = useState({ displayName: '', bio: '' });
     const [activeTab, setActiveTab] = useState('Overview');
     const [isUpdatingAvatar, setIsUpdatingAvatar] = useState(false);
+    const [isSavingProfile, setIsSavingProfile] = useState(false);
+
+    const { updateProfileInfo } = useAuth(); // getting updateProfileInfo from context
 
     // If not logged in and auth state is finished loading, redirect to login
     if (!loading && !user) {
@@ -57,6 +62,33 @@ const ProfilePage = () => {
     const joinDate = userProfile?.createdAt
         ? new Date(userProfile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
         : 'Unknown';
+    const bio = userProfile?.bio || "The fog is quiet...";
+
+    const handleOpenEditProfile = () => {
+        setEditForm({
+            displayName: displayName,
+            bio: bio === "The fog is quiet..." ? "" : bio
+        });
+        setIsEditProfileModalOpen(true);
+    };
+
+    const handleSaveProfile = async (e) => {
+        e.preventDefault();
+        setIsSavingProfile(true);
+        try {
+            await updateProfileInfo({
+                displayName: editForm.displayName.trim() || displayName,
+                bio: editForm.bio.trim()
+            });
+            toast.success("Profile updated successfully!");
+            setIsEditProfileModalOpen(false);
+        } catch (error) {
+            console.error("Error saving profile:", error);
+            toast.error("Failed to update profile.");
+        } finally {
+            setIsSavingProfile(false);
+        }
+    };
 
     const handleAvatarSelect = async (portraitUrl) => {
         setIsUpdatingAvatar(true);
@@ -138,7 +170,7 @@ const ProfilePage = () => {
                         {/* Edit Profile Action */}
                         <div className="flex justify-center md:justify-end w-full md:w-auto mt-2 md:mt-0">
                             <button
-                                onClick={() => setIsAvatarModalOpen(true)}
+                                onClick={handleOpenEditProfile}
                                 className="px-6 py-2.5 border border-white/10 rounded-xl bg-white/5 text-white hover:bg-white/10 transition-colors text-xs font-bold uppercase tracking-widest flex items-center gap-2 shadow-lg w-full md:w-auto justify-center"
                             >
                                 <UserIcon className="w-4 h-4" /> Edit Profile
@@ -149,13 +181,18 @@ const ProfilePage = () => {
 
                 {/* Contact Info Row */}
                 <div className="flex flex-col sm:flex-row justify-center md:justify-start gap-4 sm:gap-6 mt-4 sm:mt-6 px-2 sm:px-4">
-                    <div className="flex items-center gap-3 text-smoke">
-                        <div className="p-2 rounded-lg bg-white/5 border border-white/5">
-                            <EnvelopeIcon className="w-4 h-4 text-smoke" />
+                    <div className="flex items-start gap-4 text-smoke">
+                        {/* Ikon doboz */}
+                        <div className="p-3 rounded-xl bg-dbd-red/10 border border-dbd-red/30 shadow-inner">
+                            <UserIcon className="w-5 h-5 text-dbd-red" />
                         </div>
-                        <span className="text-sm font-medium">{user?.email}</span>
-                    </div>
 
+                        {/* Bio tartalom */}
+                        <div className="space-y-1">
+                            <span className="text-dbd-red font-black uppercase tracking-wider text-sm">BIO</span>
+                            <p className="text-white/80 text-sm leading-relaxed max-w-prose">{bio}</p>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Professional Tabs */}
@@ -206,8 +243,8 @@ const ProfilePage = () => {
                                 <FireIcon className="w-5 h-5 text-dbd-red" />
                                 <h3 className="text-lg font-black uppercase italic tracking-tighter text-white">Recent Activity</h3>
                             </div>
-                            <div className="flex flex-col items-center justify-center h-48 text-center opacity-50">
-                                <p className="text-smoke italic font-medium">The fog is quiet...</p>
+                            <div className="flex flex-col items-center justify-center h-48 text-center opacity-50 relative group">
+                                <p className="text-smoke italic font-medium whitespace-pre-wrap px-4">The fog is quiet...</p>
                                 <p className="text-xs text-smoke/70 mt-2">Start posting or creating builds to leave your mark.</p>
                             </div>
                         </div>
@@ -283,6 +320,90 @@ const ProfilePage = () => {
                             </div>
                         </div>
 
+                    </div>
+                </div>
+            )}
+
+            {/* Edit Profile Modal */}
+            {isEditProfileModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <div
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setIsEditProfileModalOpen(false)}
+                    ></div>
+
+                    {/* Modal Content */}
+                    <div className="glass-card w-full max-w-md flex flex-col relative border border-white/10 shadow-2xl animate-scale-up">
+                        {/* Modal Header */}
+                        <div className="flex items-center justify-between p-6 border-b border-white/10">
+                            <div>
+                                <h2 className="text-2xl font-black italic uppercase text-white">Edit Profile</h2>
+                                <p className="text-xs text-smoke mt-1">Update your display name and bio.</p>
+                            </div>
+                            <button
+                                onClick={() => setIsEditProfileModalOpen(false)}
+                                className="p-2 text-smoke hover:text-white hover:bg-white/5 rounded-xl transition-colors"
+                            >
+                                <XMarkIcon className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        {/* Form Body */}
+                        <form onSubmit={handleSaveProfile} className="p-6 flex flex-col gap-4">
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-widest text-smoke mb-2">
+                                    Display Name
+                                </label>
+                                <input
+                                    type="text"
+                                    maxLength={25}
+                                    value={editForm.displayName}
+                                    onChange={(e) => setEditForm({ ...editForm, displayName: e.target.value })}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-dbd-red transition-colors"
+                                    placeholder="Enter new display name"
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-widest text-smoke mb-2">
+                                    Biography
+                                </label>
+                                <textarea
+                                    rows={4}
+                                    maxLength={150}
+                                    value={editForm.bio}
+                                    onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-dbd-red transition-colors resize-none"
+                                    placeholder="Tell the community about yourself..."
+                                />
+                                <div className="text-right text-[10px] text-smoke mt-1">
+                                    {editForm.bio.length} / 150
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 mt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsEditProfileModalOpen(false)}
+                                    className="px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-xs text-smoke hover:text-white hover:bg-white/5 transition-all"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={isSavingProfile}
+                                    className="px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-xs bg-dbd-red text-white hover:bg-dbd-red/80 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[120px]"
+                                >
+                                    {isSavingProfile ? (
+                                        <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin"></div>
+                                    ) : (
+                                        "Save Changes"
+                                    )}
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}
