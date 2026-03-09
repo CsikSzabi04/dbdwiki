@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { db } from '../firebase/config';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 /**
- * Hook to fetch Dead by Daylight news from Steam News API
+ * Hook to fetch Dead by Daylight news from Firebase cache or Steam News API
  */
 export const useNews = () => {
     const [news, setNews] = useState([]);
@@ -11,26 +13,59 @@ export const useNews = () => {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                // 1. Check Cache First (1 hour TTL)
+                // 1. Check LocalStorage Cache First (1 hour TTL)
                 const CACHE_KEY = 'dbd_news_cache';
                 const CACHE_TIME_KEY = 'dbd_news_cache_time';
-                const CACHE_TTL = 60 * 60 * 1000; // 1 hour in milliseconds
+                const LOCAL_TTL = 60 * 60 * 1000; // 1 hour
 
                 const cachedNews = localStorage.getItem(CACHE_KEY);
                 const cacheTime = localStorage.getItem(CACHE_TIME_KEY);
 
                 if (cachedNews && cacheTime) {
                     const now = new Date().getTime();
-                    if (now - parseInt(cacheTime, 10) < CACHE_TTL) {
-                        // Use valid cache and skip slow fetch
+                    if (now - parseInt(cacheTime, 10) < LOCAL_TTL) {
                         setNews(JSON.parse(cachedNews));
                         setLoading(false);
-                        return;
+                        return; // Use local cache, skip network completely
                     }
                 }
 
                 setLoading(true);
-                // 2. Fetch from Steam News API through a faster CORS proxy if possible
+
+                // 2. Check Firebase Global Cache (6 hours TTL)
+                const FIREBASE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+                const newsDocRef = doc(db, 'system', 'news_cache');
+
+                let firebaseNews = null;
+                let needsSteamFetch = true;
+
+                try {
+                    const newsSnap = await getDoc(newsDocRef);
+                    if (newsSnap.exists()) {
+                        const data = newsSnap.data();
+                        firebaseNews = data.items;
+                        const lastUpdated = data.lastUpdated?.toMillis() || 0;
+                        const now = Date.now();
+
+                        if (now - lastUpdated < FIREBASE_TTL && data.items && data.items.length > 0) {
+                            needsSteamFetch = false; // Firebase cache is fresh enough
+                        }
+                    }
+                } catch (fbError) {
+                    console.error("Firebase read error, proceeding to Steam API:", fbError);
+                    // If permissions fail or DB fails, we just try to fetch from Steam
+                }
+
+                // If Firebase has fresh data, use it and update local storage
+                if (!needsSteamFetch && firebaseNews) {
+                    setNews(firebaseNews);
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(firebaseNews));
+                    localStorage.setItem(CACHE_TIME_KEY, new Date().getTime().toString());
+                    setLoading(false);
+                    return;
+                }
+
+                // 3. Fetch from Steam API (Slow, only done if Firebase is stale/empty)
                 // Fallback to corsproxy.io as it tends to be faster than allorigins
                 const targetUrl = 'https://api.steampowered.com/ISteamNews/GetNewsForApp/v2/?appid=381210&count=10&maxlength=5000&format=json';
                 const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
@@ -58,21 +93,36 @@ export const useNews = () => {
                     feedlabel: item.feedlabel || 'News'
                 }));
 
-                // 3. Save to Cache
-                localStorage.setItem('dbd_news_cache', JSON.stringify(newsItems));
-                localStorage.setItem('dbd_news_cache_time', new Date().getTime().toString());
+                // 4. Save to Firebase so other users get it fast
+                try {
+                    await setDoc(newsDocRef, {
+                        items: newsItems,
+                        lastUpdated: serverTimestamp()
+                    });
+                } catch (fbWriteError) {
+                    console.error("Failed to update global Firebase news cache:", fbWriteError);
+                }
+
+                // 5. Save to Local Cache
+                localStorage.setItem(CACHE_KEY, JSON.stringify(newsItems));
+                localStorage.setItem(CACHE_TIME_KEY, new Date().getTime().toString());
 
                 setNews(newsItems);
             } catch (err) {
                 console.error('Error fetching DBD news, trying fallback:', err);
 
-                // If API fails, try to aggressively use expired cache instead of breaking the app
-                const cachedNews = localStorage.getItem('dbd_news_cache');
-                if (cachedNews) {
-                    setNews(JSON.parse(cachedNews));
-                    setError(null); // Hide error since we have stale data
+                // If API fails, fallback to stale Firebase data, then stale LocalStorage data
+                if (firebaseNews) {
+                    setNews(firebaseNews);
+                    setError(null);
                 } else {
-                    setError(err.message);
+                    const staleLocal = localStorage.getItem('dbd_news_cache');
+                    if (staleLocal) {
+                        setNews(JSON.parse(staleLocal));
+                        setError(null);
+                    } else {
+                        setError(err.message);
+                    }
                 }
             } finally {
                 setLoading(false);
