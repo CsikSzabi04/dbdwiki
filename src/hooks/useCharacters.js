@@ -11,9 +11,7 @@ export const useCharacters = () => {
         const fetchCharacters = async () => {
             try {
                 setLoading(true);
-                // We still fetch from API to get any characters not in our local JSON
-                const response = await fetch('/api-tricky/api/characters');
-                const apiData = response.ok ? await response.json() : {};
+               
 
                 // 1. Process Survivors from Local JSON
                 const survivors = survivorsData.map(survivor => ({
@@ -111,3 +109,4 @@ export const useCharacters = () => {
 
     return { characters, loading, error };
 };
+
