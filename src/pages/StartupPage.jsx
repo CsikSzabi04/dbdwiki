@@ -20,7 +20,7 @@ const StartupPage = ({ onComplete }) => {
           <img
             src="https://images.steamusercontent.com/ugc/988989114488731806/4F7547A4CD93085C38217C96CEB0E879BE91C4F0/?imw=268&imh=268&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
             alt="Loading..."
-            className="w-64 h-64 object-contain"
+            className="w-64 sm:w-32 md:w-64 lg:w-88 h-auto object-contain"
           />
         </div>
 
