@@ -21,7 +21,7 @@ const bottomNavItems = [
 const Layout = ({ children }) => {
     return (
         <div className="min-h-screen bg-obsidian flex justify-center">
-            <div className="w-full max-w-[1300px] flex">
+            <div className="w-full max-w-[1600px] flex">
 
                 {/* Left Sidebar — hidden on mobile, icon-only on md, full on lg */}
                 <aside className="hidden md:flex md:w-[80px] lg:w-[260px] h-screen sticky top-0 border-r border-white/5 py-4 px-2 lg:px-4 flex-col justify-between shrink-0">
@@ -65,3 +65,4 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
+
