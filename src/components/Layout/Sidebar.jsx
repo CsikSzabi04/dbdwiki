@@ -21,7 +21,7 @@ const Sidebar = () => {
         try {
             await logout();
             toast.success('Escaped the Fog');
-            navigate('/login');
+            navigate('/');
         } catch {
             toast.error('Failed to logout');
         }

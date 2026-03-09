@@ -5,7 +5,8 @@ import {
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     signOut,
-    updateProfile
+    updateProfile,
+    sendEmailVerification
 } from 'firebase/auth';
 import { getUserProfile, createUserProfile, updateUserAvatar, updateUserProfile } from '../firebase/users';
 import { AuthContext } from './AuthContextInstance';
@@ -41,6 +42,10 @@ export const AuthProvider = ({ children }) => {
 
     const signup = async (email, password, displayName) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+        // Send email verification immediately
+        await sendEmailVerification(userCredential.user);
+
         await updateProfile(userCredential.user, { displayName });
 
         // Set Leon Kennedy as default avatar

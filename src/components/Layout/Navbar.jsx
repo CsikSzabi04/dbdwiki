@@ -9,7 +9,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await import('../../firebase/auth').then(({ logout }) => logout())
-      navigate('/login')
+      navigate('/')
     } catch (error) {
       console.error('Logout failed:', error)
     }
@@ -38,22 +38,22 @@ const Navbar = () => {
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <Link to="/home" className="text-xl font-bold text-gray-900">DBD Community</Link>
-            
+
             <div className="hidden md:ml-8 md:flex md:space-x-8">
-              <Link 
-                to="/home" 
+              <Link
+                to="/home"
                 className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Feed
               </Link>
-              <Link 
-                to="/wiki" 
+              <Link
+                to="/wiki"
                 className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Wiki
               </Link>
-              <Link 
-                to="/news" 
+              <Link
+                to="/news"
                 className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 News
@@ -64,8 +64,8 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {currentUser ? (
               <>
-                <Link 
-                  to="/profile" 
+                <Link
+                  to="/profile"
                   className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Profile
@@ -79,14 +79,14 @@ const Navbar = () => {
               </>
             ) : (
               <>
-                <Link 
-                  to="/login" 
+                <Link
+                  to="/login"
                   className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Login
                 </Link>
-                <Link 
-                  to="/signup" 
+                <Link
+                  to="/signup"
                   className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Signup

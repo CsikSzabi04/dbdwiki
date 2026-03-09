@@ -60,7 +60,10 @@ export const useNews = () => {
                     await syncNewsWithFirestore(newsItems);
                 }
             } catch (err) {
-                console.error('News sync error:', err);
+                // Ignore permission errors in the console for guests
+                if (err.code !== 'permission-denied') {
+                    console.error('News sync error:', err);
+                }
 
                 // If everything fails and no news, set error
                 if (news.length === 0) {
@@ -72,8 +75,8 @@ export const useNews = () => {
                     }
                 }
             } finally {
-                // Ensure loading is off if we have data
-                if (news.length > 0) setLoading(false);
+                // Subscription handles loading state usually, but ensure it's off if sync finishes
+                setLoading(false);
             }
         };
 

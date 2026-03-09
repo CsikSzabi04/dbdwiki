@@ -9,6 +9,7 @@ import {
   getDoc,
   doc,
   updateDoc,
+  deleteDoc,
   arrayUnion,
   arrayRemove,
   increment
@@ -52,7 +53,8 @@ export const subscribeToPosts = (callback) => {
       let currentName = data.authorName;
 
       // Ensure we get the latest avatar/name for the author if they updated it
-      if (data.authorId) {
+      // Skip for anonymous bots
+      if (data.authorId && !data.authorId.startsWith('guest_') && data.authorId !== 'anonymous') {
         try {
           const userRef = doc(db, 'users', data.authorId);
           const pfpRef = doc(db, 'pfp', data.authorId);
@@ -82,7 +84,9 @@ export const subscribeToPosts = (callback) => {
     const posts = await Promise.all(postsPromises);
     callback(posts);
   }, (error) => {
-    console.error("Error subscribing to posts: ", error);
+    if (error.code !== 'permission-denied') {
+      console.error("Error subscribing to posts: ", error);
+    }
   });
 };
 
@@ -146,7 +150,8 @@ export const subscribeToComments = (postId, callback) => {
       let currentName = data.authorName;
 
       // Ensure latest user details
-      if (data.authorId) {
+      // Skip for anonymous bots
+      if (data.authorId && !data.authorId.startsWith('guest_') && data.authorId !== 'anonymous') {
         try {
           const userRef = doc(db, 'users', data.authorId);
           const pfpRef = doc(db, 'pfp', data.authorId);
@@ -175,6 +180,38 @@ export const subscribeToComments = (postId, callback) => {
     const comments = await Promise.all(commentsPromises);
     callback(comments);
   }, (error) => {
-    console.error("Error subscribing to comments: ", error);
+    if (error.code !== 'permission-denied') {
+      console.error("Error subscribing to comments: ", error);
+    }
   });
+};
+
+/**
+ * Deletes a post from Firestore.
+ */
+export const deletePost = async (postId) => {
+  try {
+    const postRef = doc(db, 'posts', postId);
+    await deleteDoc(postRef);
+  } catch (error) {
+    console.error("Error deleting post: ", error);
+    throw error;
+  }
+};
+
+/**
+ * Updates a post's content in Firestore.
+ */
+export const updatePost = async (postId, newContent) => {
+  try {
+    const postRef = doc(db, 'posts', postId);
+    await updateDoc(postRef, {
+      content: newContent,
+      updatedAt: serverTimestamp(),
+      isEdited: true
+    });
+  } catch (error) {
+    console.error("Error updating post: ", error);
+    throw error;
+  }
 };

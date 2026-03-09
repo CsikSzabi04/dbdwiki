@@ -1,9 +1,44 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import {
   PhotoIcon,
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../hooks/useAuth';
+import survivorsData from '../../hooks/survivors.json';
+import killersData from '../../hooks/killers.json';
+import { Link } from 'react-router-dom';
+
+const allCharacters = [...survivorsData, ...killersData].filter(c => c.imgs?.portrait);
+
+const compressImage = (base64Str, maxWidth = 1200, maxHeight = 1200) => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width *= maxHeight / height;
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compress to 70% quality JPEG
+    };
+  });
+};
 
 const CreatePost = ({ onSubmit }) => {
   const { user, userProfile } = useAuth();
@@ -12,16 +47,24 @@ const CreatePost = ({ onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
 
+  // Pick a random avatar for guests that persists until they refresh or post
+  const guestAvatar = useMemo(() => {
+    if (user) return null;
+    const randomChar = allCharacters[Math.floor(Math.random() * allCharacters.length)];
+    return randomChar.imgs.portrait;
+  }, [user]);
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 5 * 1024 * 1024) { // 5MB limit
-        alert("Image is too large. Max 5MB.");
+      if (file.size > 10 * 1024 * 1024) { // 10MB limit for raw upload, we will compress it
+        alert("Image is too large. Max 10MB.");
         return;
       }
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result);
+      reader.onloadend = async () => {
+        const compressed = await compressImage(reader.result);
+        setImage(compressed);
       };
       reader.readAsDataURL(file);
     }
@@ -40,12 +83,15 @@ const CreatePost = ({ onSubmit }) => {
 
     try {
       if (onSubmit) {
+        const authorName = user ? (userProfile?.displayName || user?.email?.split('@')[0] || 'Unknown Entity') : 'bot@gmail.com';
+        const authorAvatar = user ? (userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`) : guestAvatar;
+
         await onSubmit({
           content,
           imageUrl: image,
-          authorId: user?.uid,
-          authorName: userProfile?.displayName || user?.email?.split('@')[0] || 'Unknown Entity',
-          authorAvatar: userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`
+          authorId: user?.uid || 'anonymous',
+          authorName,
+          authorAvatar
         });
       }
       setContent('');
@@ -62,19 +108,29 @@ const CreatePost = ({ onSubmit }) => {
 
   if (!user) {
     return (
-      <div className="p-4 border-b border-white/5 bg-white/[0.02] text-center">
-        <p className="text-smoke text-sm">Sign in to share your thoughts with the community!</p>
+      <div className="p-6 border-b border-white/5 bg-white/[0.02] text-center">
+        <h3 className="text-xl font-bold text-white mb-2">Join the entity</h3>
+        <p className="text-smoke text-sm mb-4">You're currently browsing as a guest bot. Sign in to post builds and highlights.</p>
+        <Link
+          to="/login"
+          className="w-[20%] mx-auto flex items-center justify-center gap-3 px-3 lg:px-4 py-3 rounded-xl bg-dbd-red text-white hover:bg-dbd-red/80 transition-all group shadow-lg shadow-red-900/20"
+          title="Sign In"
+        >
+          Sign In
+        </Link>
       </div>
     );
   }
+
+  const displayAvatar = userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`;
 
   return (
     <div className="p-3 sm:p-4 border-b border-white/5 bg-white/[0.02]">
       <div className="flex gap-3 sm:gap-4">
         {/* User Avatar */}
-        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 overflow-hidden shrink-0">
+        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border border-white/10 overflow-hidden shrink-0 bg-obsidian-light">
           <img
-            src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
+            src={displayAvatar}
             alt="Your Avatar"
             className="w-full h-full object-cover"
           />
@@ -82,12 +138,21 @@ const CreatePost = ({ onSubmit }) => {
 
         {/* Input Area */}
         <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Share your latest build or a legendary escape..."
-            className="w-full bg-transparent border-none text-base sm:text-xl resize-none focus:ring-0 placeholder:text-smoke/40 h-16 sm:h-24 mt-1 sm:mt-2"
-          ></textarea>
+          <div className="relative">
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Share your latest build or a legendary escape..."
+              maxLength={1000}
+              className="w-full bg-transparent border-none text-base sm:text-xl resize-none focus:ring-0 placeholder:text-smoke/40 h-24 sm:h-32 mt-1 sm:mt-2"
+            ></textarea>
+
+            {/* Character Counter */}
+            <div className={`absolute bottom-0 right-0 text-[10px] font-bold tracking-tighter px-2 py-1 select-none pointer-events-none transition-colors ${content.length >= 900 ? 'text-dbd-red' : 'text-smoke/30'
+              }`}>
+              {content.length} / 1000
+            </div>
+          </div>
 
           {/* Image Preview */}
           {image && (

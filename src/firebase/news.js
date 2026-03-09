@@ -39,6 +39,10 @@ export const syncNewsWithFirestore = async (newsItems) => {
 
         console.log(`Successfully synced ${newsItems.length} news items to Firestore.`);
     } catch (error) {
+        if (error.code === 'permission-denied') {
+            console.warn("Guest user: Missing permission to sync news to Firestore. This is normal if not using the new rules.");
+            return;
+        }
         console.error("Error syncing news to Firestore: ", error);
         throw error;
     }
@@ -56,7 +60,9 @@ export const getLastSyncTime = async () => {
         }
         return 0;
     } catch (error) {
-        console.error("Error getting last sync time: ", error);
+        if (error.code !== 'permission-denied') {
+            console.error("Error getting last sync time: ", error);
+        }
         return 0;
     }
 };
@@ -95,6 +101,8 @@ export const subscribeToNews = (callback, count = 10) => {
         }));
         callback(news);
     }, (error) => {
-        console.error("Error subscribing to news: ", error);
+        if (error.code !== 'permission-denied') {
+            console.error("Error subscribing to news: ", error);
+        }
     });
 };

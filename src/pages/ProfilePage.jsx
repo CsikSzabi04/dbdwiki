@@ -137,9 +137,9 @@ const ProfilePage = () => {
                                 className={`w-full h-full object-cover relative z-10 transition-transform duration-500 ${isUpdatingAvatar ? 'opacity-50 blur-sm' : 'group-hover:scale-110'}`}
                             />
                             {/* Hover overlay */}
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex flex-col items-center justify-center gap-1 backdrop-blur-[2px]">
-                                <PhotoIcon className="w-8 h-8 text-white" />
-                                <span className="text-white text-[10px] font-black uppercase tracking-widest text-center">Change</span>
+                            <div className="absolute  bg-black/60 inset-0 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex flex-col items-center justify-center gap-1">
+                                <PhotoIcon className="w-8 h-8 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]" />
+                                <span className="text-white text-[10px] font-black uppercase tracking-widest text-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">Change</span>
                             </div>
 
                             {isUpdatingAvatar && (

@@ -14,7 +14,8 @@ export const createUserProfile = async (userId, userData) => {
   await setDoc(userRef, {
     ...userData,
     createdAt: new Date().toISOString(),
-    followers: 0
+    followers: 0,
+    admin: false
   })
 }
 
