@@ -298,7 +298,7 @@
     },
     {
         "number": 11,
-        "name": "David Tapp",
+        "name": "Detective Tapp",
         "code": "davidtapp",
         "gender": "male",
         "licensed": true,
@@ -433,7 +433,7 @@
     },
     {
         "number": 16,
-        "name": "Ash J. Williams",
+        "name": "Ashley J. Williams",
         "code": "ashjwilliams",
         "gender": "male",
         "licensed": true,

@@ -17,6 +17,13 @@ import NewsPage from './pages/NewsPage'
 function App() {
   const [isStarting, setIsStarting] = useState(true)
 
+  // Ha az oldal nem a gyökéren (/) tölt be (tehát frissítettek pl a /wiki-n),
+  // akkor azonnal cseréljük le az URL-t a főoldalra még mielőtt a Router betöltene,
+  // így garantálva a Startup screen és a kezdőlap betöltését az F5 után is.
+  if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+    window.history.replaceState(null, '', '/');
+  }
+
   if (isStarting) {
     return <StartupPage onComplete={() => setIsStarting(false)} />
   }
@@ -35,6 +42,9 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/builds" element={<BuildOn />} />
             <Route path="/available-on" element={<AvailableOnPage />} />
+
+            {/* Catch-all route to redirect any unknown/refresh path back to root */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </Router>

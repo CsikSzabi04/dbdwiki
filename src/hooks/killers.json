@@ -1583,8 +1583,46 @@
         "overview": "Taurie Cain is a theatrical Killer who uses performance and misdirection to confuse and trap Survivors.",
         "backstory": "Little is known about Taurie Cain's past before joining the Troupe. A mysterious figure with a dark connection to the theater, she brings a sense of dramatic horror to the Entity's realm.",
         "imgs": {
-            "portrait": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/9/93/K41_TheKrasue_Portrait.png",
+            "portrait": "https://deadbydaylight.wiki.gg/images/S45_TaurieCain_Portrait.png?44fce2",
             "store": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/9/9a/K42_storeBackground.png"
+        }
+    },
+    {
+        "number": 42,
+        "code": "thekrasue",
+        "name": "The Krasue",
+        "fullName": "Burong Sukapat",
+        "nationality": "Thai",
+        "gender": "female",
+        "licensed": false,
+        "dlc": "Chapter 35: Sinister Grace",
+        "difficulty": "Medium",
+        "realm": null,
+        "powerAttackType": "Intestinal Whip / Regurgitated Projectile",
+        "weapon": "Entrails",
+        "moveSpeed": "115% | 4.6 m/s (Human form) / Increased (Floating head form)",
+        "terrorRadius": "32 m",
+        "height": "Average (Human form) / Variable (Floating head form)",
+        "perks_names": [
+            "Unbodied Flesh",
+            "Feast of Despair",
+            "Curse of Fame"
+        ],
+        "perks_ids": [
+            139,
+            140,
+            141
+        ],
+        "power": {
+            "powerId": 42,
+            "powerName": "Unbodied Flesh",
+            "powerCode": "unbodiedflesh"
+        },
+        "overview": "By day, Burong Sukapat appears as a beautiful woman. By night, the Krasue emerges as a disembodied floating head…entrails dangling from its neck, to feed its insatiable hunger. Alternate between forms to plunge Survivors into a nightmare of torn flesh, sopping blood, and grotesque body horror.",
+        "backstory": "Burong Sukapat's operatic rehearsals in Thailand were a sea of emotion, but despite tiring efforts she was unable to become anything more than an understudy. What started as a desire to share her gift, became an unshakable need for fame. Her childhood friend Janjira was her biggest supporter, but aside from a shoulder to cry on, there was little more she could offer. It wasn't until Malai—a fellow singer who had quickly risen the ranks—reached out, that Burong's fortunes changed.\n\nMalai presented Burong with a glass bottle, a clear liquid within, and advised her to drink it, her tone deadly serious: \"Each night, another will inhabit your body—but you will be a success on the stage like me.\"\n\nBurong laughed at the peculiar game. Even so, she wanted more than anything to believe its truth. She grabbed the bottle, swallowing every drop.\n\nIn the following weeks, Burong's skin felt softer, and she found a depth in her voice that she never knew existed. During her next audition, the director took notice, enraptured by the sound that rang through the theater. As the song ended, Burong thanked the director before coughing blood into a handkerchief. She stuffed it into her pocket, choosing ignorance. Whatever was happening to her was working—she wouldn't dare stop it now.\n\nThat night, as she slept, a soothing warmth dripped down her body. She bolted upright, hand fumbling for a lamp that wasn't there. She lay in a yard she did not recognize, covered in blood. Next to her, a ravaged chicken coop, feathers and gore staining the ground.\n\nShe stumbled home before the city awoke to a new day. Under a scalding shower, she spit up blood, dreading the thought that this hadn't been her first hunt. In between heaving sobs, she prodded her abdomen, searching for where something might hide within.\n\nShe called Janjira but couldn't bring herself to reveal the horrors, instead telling her friend she'd been restlessly sleepwalking each night and needed someone to coax her back to bed. Janjira agreed to help.\n\nThat morning, Burong awoke to Janjira's hand lovingly placed on her cheek. As she looked up, she choked on her cries. Janjira's severed hand fell from the bed, landing on her disemboweled carcass.\n\nFor hours, she sat beside her friend's remains in a state of silent shock. Janjira was dead and for what?\n\nWhen she couldn't stand the smell of blood any longer, she grabbed cleaning supplies. As the sun set, a deep stain remained on the carpet.\n\nShe walked through the streets until she reached Malai's home. Malai opened the door and, upon seeing Burong's eyes, immediately defended herself. She claimed she committed no wrong—she had been cursed, and the only way to be rid of it was to pass it to someone else. She believed that Burong, in her desire for fame, could withstand the torment and achieve what she'd always wanted.\n\nAnger stirred within Burong. She fell to the floor as furious heat spilled over her. Malai stared in horror while Burong dug nails into her own skin, ripping at the burning agony. As she tore chunks of flesh from her neck, her entrails wriggled inside. Her head tore free from her body, a long string of organs dragging behind like fish slapping against the shore.\n\nA seething hunger took over as Burong's disembodied head lifted into the air. It swooped at Malai, ravenously mauling the woman until nothing remained but blood, hair, and bone. Burong awoke to the mess, unable to find the sympathy to shed a tear.\n\nShe returned home, allowing her thoughts to swirl until the room filled with light.\n\nThe phone rang.\n\nThe director's voice cut through the haze that had settled in her mind. He offered her the leading role. Burong fell to her bed and cried, not from sadness, but relief and elation.\n\nDuring the evenings on the Bangkok stage, her star shined bright. At night, she fed the creature within, and together they thrived in a world of hunger and song. But the creature always wanted more and one night it was presented just that—a promise of meat, hung on hooks, dripping in tantalizing blood.\n\nAnd then there was fog.",
+        "imgs": {
+            "portrait": "https://deadbydaylight.wiki.gg/images/K41_TheKrasue_Portrait.png?3513ba",
+            "store": "https://deadbydaylight.wiki.gg/images/TheKrasue_storeBackground.png"
         }
     }
 ]
