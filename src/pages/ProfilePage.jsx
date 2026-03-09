@@ -155,12 +155,7 @@ const ProfilePage = () => {
                         </div>
                         <span className="text-sm font-medium">{user?.email}</span>
                     </div>
-                    <div className="flex items-center gap-3 text-smoke">
-                        <div className="p-2 rounded-lg bg-white/5 border border-white/5">
-                            <CalendarDaysIcon className="w-4 h-4 text-smoke" />
-                        </div>
-                        <span className="text-sm font-medium">Joined {joinDate}</span>
-                    </div>
+
                 </div>
 
                 {/* Professional Tabs */}
@@ -199,7 +194,7 @@ const ProfilePage = () => {
                                     <p className="text-[10px] text-smoke font-bold uppercase tracking-widest mt-1">Builds Saved</p>
                                 </div>
                                 <div className="bg-black/40 border border-white/5 p-4 rounded-xl text-center hover:border-white/20 transition-colors cursor-default col-span-2">
-                                    <p className="text-3xl font-black text-dbd-red drop-shadow-[0_0_10px_rgba(255,18,18,0.5)]">Ash IV</p>
+                                    <p className="text-3xl font-black text-dbd-red drop-shadow-[0_0_10px_rgba(255,18,18,0.5)]">Prestige 1</p>
                                     <p className="text-[10px] text-smoke font-bold uppercase tracking-widest mt-1">Current Grade</p>
                                 </div>
                             </div>

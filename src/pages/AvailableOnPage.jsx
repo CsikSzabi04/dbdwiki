@@ -8,7 +8,7 @@ import {
     ExclamationTriangleIcon
 } from '@heroicons/react/24/outline';
 
-/* ─── Platform Card with proper logos ───────────────────────────── */
+/* ─── Platform Card with proper logos - ALWAYS VISIBLE ─────────── */
 const PlatformCard = ({ href, logo, name, sub, type, action, bgColor = 'bg-black/40' }) => (
     <a
         href={href}
@@ -22,16 +22,16 @@ const PlatformCard = ({ href, logo, name, sub, type, action, bgColor = 'bg-black
         {/* bottom red line */}
         <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-dbd-red scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 rounded-full" />
 
-        {/* Logo container */}
+        {/* Logo container - ALWAYS SHOW COLOR LOGO */}
         <div className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300`}>
-            <img 
-                src={logo} 
+            <img
+                src={logo}
                 alt={name}
-                className="w-8 h-8 object-contain filter brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all duration-300"
+                className="w-8 h-8 object-contain" // ELTÁVOLÍTVA: filter brightness-0 invert
                 onError={(e) => {
                     e.target.onerror = null;
                     e.target.style.display = 'none';
-                    // Fallback to text if image fails
+                    // Fallback to colored text if image fails
                     e.target.parentElement.innerHTML = `<span class="text-2xl font-black text-white">${name.charAt(0)}</span>`;
                 }}
             />
@@ -54,7 +54,7 @@ const PlatformCard = ({ href, logo, name, sub, type, action, bgColor = 'bg-black
     </a>
 );
 
-/* ─── Social Card with proper logos ─────────────────────────────── */
+/* ─── Social Card with proper logos - ALWAYS VISIBLE ───────────── */
 const SocialCard = ({ href, logo, name, desc, action, bgColor = 'bg-black/40' }) => (
     <a
         href={href}
@@ -63,14 +63,14 @@ const SocialCard = ({ href, logo, name, desc, action, bgColor = 'bg-black/40' })
         className="group flex flex-col items-center text-center gap-2 p-6 bg-black/40 border border-white/5 rounded-2xl hover:border-white/12 hover:bg-white/5 transition-all duration-300"
     >
         <div className={`w-16 h-16 ${bgColor} rounded-2xl flex items-center justify-center overflow-hidden group-hover:scale-110 transition-all duration-300 mb-2`}>
-            <img 
-                src={logo} 
+            <img
+                src={logo}
                 alt={name}
-                className="w-10 h-10 object-contain filter brightness-0 invert group-hover:brightness-100 group-hover:invert-0 transition-all duration-300"
+                className="w-10 h-10 object-contain" // ELTÁVOLÍTVA: filter brightness-0 invert
                 onError={(e) => {
                     e.target.onerror = null;
                     e.target.style.display = 'none';
-                    // Fallback to text if image fails
+                    // Fallback to colored text if image fails
                     e.target.parentElement.innerHTML = `<span class="text-3xl font-black text-white">${name.charAt(0)}</span>`;
                 }}
             />
@@ -96,23 +96,33 @@ const Divider = ({ label }) => (
 
 /* ─── Main Component ─────────────────────────────────────────────── */
 const AvailableOnPage = () => {
-    // Platform logos from official sources
+    // Platform logos from official sources - FRISSÍTVE jobb minőségű logókra
     const platformLogos = {
         steam: 'https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg',
         epic: 'https://upload.wikimedia.org/wikipedia/commons/3/31/Epic_Games_logo.svg',
         microsoft: 'https://upload.wikimedia.org/wikipedia/commons/f/f2/Microsoft_logo_%282012%29.svg',
-        playstation: 'https://upload.wikimedia.org/wikipedia/commons/0/00/PlayStation_logo.svg',
+        playstation: 'https://www.freepnglogos.com/uploads/playstation-logo-png/playstation-logo-ps-one-1.png',
         xbox: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg',
         nintendo: 'https://upload.wikimedia.org/wikipedia/commons/8/8f/Nintendo_switch_logo.png'
     };
 
-    // Social media logos
+    // Social media logos - FRISSÍTVE színes verziókra
     const socialLogos = {
-        youtube: 'https://upload.wikimedia.org/wikipedia/commons/0/09/YouTube_full-color_icon_%282017%29.svg',
-        facebook: 'https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png',
+        youtube: 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png',
+        facebook: 'https://upload.wikimedia.org/wikipedia/en/0/04/Facebook_f_logo_%282021%29.svg',
         twitter: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg',
         twitch: 'https://upload.wikimedia.org/wikipedia/commons/2/26/Twitch_logo.svg',
-        instagram: 'https://upload.wikimedia.org/wikipedia/commons/9/95/Instagram_logo_2022.svg'
+        instagram: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg'
+    };
+
+    // Alternatív, megbízhatóbb logók (ha a fentiek nem működnének)
+    const fallbackLogos = {
+        steam: 'https://store.steampowered.com/favicon.ico',
+        epic: 'https://static-assets-prod.epicgames.com/epic-store/static/favicon.ico',
+        playstation: 'https://www.playstation.com/favicon.ico',
+        xbox: 'https://www.xbox.com/favicon.ico',
+        youtube: 'https://www.youtube.com/s/desktop/0141db2f/img/favicon.ico',
+        twitch: 'https://www.twitch.tv/favicon.ico'
     };
 
     return (
@@ -140,13 +150,13 @@ const AvailableOnPage = () => {
 
                 {/* Hero intro with DBD logo */}
                 <div className="mb-10 mt-4 text-center">
-                    <img 
+                    <img
                         src="https://cdn2.steamgriddb.com/logo/e0b7fb19e92fc04ce11b0009c7dfa1af.png"
                         alt="Dead by Daylight"
                         className="h-16 sm:h-20 mx-auto mb-4 object-contain"
                         onError={(e) => {
                             e.target.onerror = null;
-                            e.target.style.display = 'none';
+                            e.target.src = 'https://deadbydaylight.com/favicon.ico'; // Fallback
                         }}
                     />
                     <p className="text-[10px] font-bold uppercase tracking-[0.35em] text-dbd-red mb-2">Behaviour Interactive</p>
@@ -211,7 +221,7 @@ const AvailableOnPage = () => {
                         sub="Xbox One · Series S/X"
                         type="Console Store"
                         action="Install"
-                        bgColor="bg-[#107c10]"
+                        bgColor="bg-white"
                     />
                     <PlatformCard
                         href="https://www.nintendo.com/us/store/products/dead-by-daylight-switch/"
@@ -234,43 +244,43 @@ const AvailableOnPage = () => {
                     </div>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                        <SocialCard 
-                            href="https://www.youtube.com/c/DeadbyDaylight" 
+                        <SocialCard
+                            href="https://www.youtube.com/c/DeadbyDaylight"
                             logo={socialLogos.youtube}
-                            name="YouTube" 
-                            desc="Trailers & updates" 
+                            name="YouTube"
+                            desc="Trailers & updates"
                             action="Subscribe"
                             bgColor="bg-[#ff0000]"
                         />
-                        <SocialCard 
-                            href="https://www.facebook.com/DeadbyDaylight/" 
+                        <SocialCard
+                            href="https://www.facebook.com/DeadbyDaylight/"
                             logo={socialLogos.facebook}
-                            name="Facebook" 
-                            desc="Community events" 
+                            name="Facebook"
+                            desc="Community events"
                             action="Like Page"
                             bgColor="bg-[#1877f2]"
                         />
-                        <SocialCard 
-                            href="https://twitter.com/dbdgame" 
+                        <SocialCard
+                            href="https://twitter.com/dbdgame"
                             logo={socialLogos.twitter}
-                            name="X" 
-                            desc="Real-time updates" 
+                            name="X"
+                            desc="Real-time updates"
                             action="Follow"
                             bgColor="bg-black"
                         />
-                        <SocialCard 
-                            href="https://www.twitch.tv/deadbydaylight" 
+                        <SocialCard
+                            href="https://www.twitch.tv/deadbydaylight"
                             logo={socialLogos.twitch}
-                            name="Twitch" 
-                            desc="Live streams" 
+                            name="Twitch"
+                            desc="Live streams"
                             action="Follow"
                             bgColor="bg-[#9146ff]"
                         />
-                        <SocialCard 
-                            href="https://www.instagram.com/deadbydaylight/" 
+                        <SocialCard
+                            href="https://www.instagram.com/deadbydaylight/"
                             logo={socialLogos.instagram}
-                            name="Instagram" 
-                            desc="Art & behind-the-scenes" 
+                            name="Instagram"
+                            desc="Art & behind-the-scenes"
                             action="Follow"
                             bgColor="bg-[#e4405f]"
                         />
@@ -331,8 +341,6 @@ const AvailableOnPage = () => {
                         </div>
                     </div>
                 </div>
-
-            
             </div>
         </Layout>
     );
