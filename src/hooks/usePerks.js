@@ -11,10 +11,8 @@ export const usePerks = () => {
         const fetchPerks = async () => {
             try {
                 setLoading(true);
-                
-                // API hívás a tricky.lol-ról további perkekért
-                const response = await fetch('/api-tricky/api/perksl');
-                const apiData = response.ok ? await response.json() : {};
+
+
 
                 // 1. Survivor perkek feldolgozása a helyi JSON-ból
                 const survivors = survivorsPerksData.map(perk => ({
@@ -42,35 +40,10 @@ export const usePerks = () => {
                     isLocal: true
                 }));
 
-                // Normalize name for comparison
-                const normalizeName = (name) => {
-                    if (!name) return '';
-                    return name.toString().toLowerCase().replace(/[^a-z0-9]/g, '');
-                };
 
-                // 3. Extra perkek az API-ból, amik nincsenek meg a helyi JSON-ban
-                const localNames = new Set([...survivors, ...killers].map(p => normalizeName(p.name)));
-
-                const extraPerks = Object.values(apiData)
-                    .filter(perk => {
-                        return !localNames.has(normalizeName(perk.name));
-                    })
-                    .map(perk => ({
-                        id: perk.id || Math.random(),
-                        name: perk.name,
-                        code: perk.code || perk.name.toLowerCase().replace(/\s+/g, ''),
-                        role: perk.role || (perk.killerName ? 'killer' : 'survivor'),
-                        killerCode: perk.killerCode,
-                        killerName: perk.killerName,
-                        survivorCode: perk.survivorCode,
-                        survivorName: perk.survivorName,
-                        description: perk.description || '',
-                        icon: perk.icon || `https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/8/86/IconPerks_${perk.code}.png`,
-                        isLocal: false
-                    }));
 
                 // 4. Összes perk kombinálása
-                setPerks([...killers, ...survivors, ...extraPerks]);
+                setPerks([...killers, ...survivors]);
             } catch (err) {
                 console.error("Error fetching perks:", err);
                 // Fallback to local data only
