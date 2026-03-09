@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
+import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -94,6 +95,13 @@ const LoginPage = () => {
             >
               {loading ? 'Entering the Fog...' : 'Enter the Fog'}
             </button>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 text-smoke hover:text-dbd-red transition-colors group text-sm font-bold uppercase tracking-widest italic"
+            >
+              <ArrowLeftIcon className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Back to Home</span>
+            </Link>
           </form>
 
           <div className="mt-8 pt-6 border-t border-white/5 text-center">
