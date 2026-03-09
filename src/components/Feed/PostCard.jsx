@@ -41,18 +41,6 @@ const PostCard = ({ post }) => {
   const isAdmin = userProfile?.admin === true;
   const canManage = isOwner || isAdmin;
 
-  // Persistent guest ID for likes
-  const guestUid = useMemo(() => {
-    let id = localStorage.getItem('dbd_guest_uid');
-    if (!id) {
-      id = 'guest_' + Math.random().toString(36).substr(2, 9);
-      localStorage.setItem('dbd_guest_uid', id);
-    }
-    return id;
-  }, []);
-
-  const effectiveUid = user?.uid || guestUid;
-
   // Random avatar for guest comments
   const guestCommentAvatar = useMemo(() => {
     const randomChar = allCharacters[Math.floor(Math.random() * allCharacters.length)];
@@ -61,10 +49,12 @@ const PostCard = ({ post }) => {
 
   useEffect(() => {
     setLikesCount(post.likes || 0);
-    if (post.likedBy) {
-      setIsLiked(post.likedBy.includes(effectiveUid));
+    if (post.likedBy && user) {
+      setIsLiked(post.likedBy.includes(user.uid));
+    } else {
+      setIsLiked(false);
     }
-  }, [post.likes, post.likedBy, effectiveUid]);
+  }, [post.likes, post.likedBy, user]);
 
   useEffect(() => {
     let unsubscribe;
@@ -125,9 +115,10 @@ const PostCard = ({ post }) => {
     try {
       await toggleLikePost(post.id, user.uid, currentlyLiked);
     } catch (error) {
+      console.error("DEBUG - Like failed. User:", user?.uid, "Error:", error);
       setIsLiked(currentlyLiked);
       setLikesCount(prev => currentlyLiked ? prev + 1 : prev - 1);
-      toast.error('Failed to update like.');
+      toast.error('You must be in the Fog to like posts. Sign in or Sign up!');
     }
   };
 
