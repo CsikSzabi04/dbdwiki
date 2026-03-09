@@ -25,6 +25,7 @@ const PlatformCard = ({ href, logo, name, sub, type, action, bgColor = 'bg-black
         {/* Logo container - ALWAYS SHOW COLOR LOGO */}
         <div className={`w-12 h-12 ${bgColor} rounded-xl flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform duration-300`}>
             <img
+                loading="lazy"
                 src={logo}
                 alt={name}
                 className="w-8 h-8 object-contain" // ELTÁVOLÍTVA: filter brightness-0 invert
@@ -64,6 +65,7 @@ const SocialCard = ({ href, logo, name, desc, action, bgColor = 'bg-black/40' })
     >
         <div className={`w-16 h-16 ${bgColor} rounded-2xl flex items-center justify-center overflow-hidden group-hover:scale-110 transition-all duration-300 mb-2`}>
             <img
+                loading="lazy"
                 src={logo}
                 alt={name}
                 className="w-10 h-10 object-contain" // ELTÁVOLÍTVA: filter brightness-0 invert

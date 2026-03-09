@@ -175,6 +175,7 @@ const CommunityLegends = () => {
                                         <div className="relative">
                                             <div className="w-10 h-10 rounded-full bg-red-900/30 flex items-center justify-center border-2 border-red-600/30 shrink-0 overflow-hidden group-hover:border-red-600/60 transition-all">
                                                 <img
+                                                    loading="lazy"
                                                     src={creator.avatarUrl}
                                                     alt={creator.displayName}
                                                     className="w-full h-full object-cover"
@@ -247,6 +248,7 @@ const CommunityLegends = () => {
                             <div className="flex items-center gap-2 p-2 bg-black/40 rounded-lg border border-white/5">
                                 <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center border border-purple-500/30 shrink-0 overflow-hidden">
                                     <img
+                                        loading="lazy"
                                         src="https://static-cdn.jtvnw.net/jtv_user_pictures/otzdarva-profile_image-7c7a3a00da531549-300x300.png"
                                         alt="Otzdarva"
                                         className="w-full h-full object-cover"
@@ -313,6 +315,7 @@ const CommunityLegends = () => {
                                     >
                                         <div className="w-6 h-6 rounded-full bg-pink-900/30 flex items-center justify-center border border-pink-500/30 shrink-0 overflow-hidden">
                                             <img
+                                                loading="lazy"
                                                 src={`https://img.tiktok.com/api/avatar/?username=${creator.username}`}
                                                 alt={creator.displayName}
                                                 className="w-full h-full object-cover"

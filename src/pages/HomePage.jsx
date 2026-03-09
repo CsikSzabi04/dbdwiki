@@ -35,7 +35,7 @@ const HomePage = () => {
         <h2 className="text-lg sm:text-xl font-bold uppercase tracking-widest text-white">Home</h2>
         <div className="flex gap-2 sm:gap-4">
           <button className="text-xs sm:text-sm font-bold pb-2 border-b-4 border-dbd-red transition-all">For You</button>
-          <button className="text-xs sm:text-sm font-bold pb-2 text-smoke hover:text-white transition-all">Following</button>
+
         </div>
       </div>
 

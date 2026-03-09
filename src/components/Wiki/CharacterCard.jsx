@@ -28,6 +28,7 @@ const CharacterCard = ({ character, onClick }) => {
             {/* Image Container */}
             <div className="aspect-[3/4] overflow-hidden relative bg-black/50">
                 <img
+                    loading="lazy"
                     src={character.imageUrl}
                     alt={character.name}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-90 group-hover:opacity-100"

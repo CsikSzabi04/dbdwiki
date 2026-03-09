@@ -30,6 +30,7 @@ const PerkCard = ({ perk, onClick, onInfoClick, activeTab }) => {
             <div className="aspect-square bg-gradient-to-br from-black to-obsidian relative flex items-center justify-center">
                 {!imageError ? (
                     <img
+                        loading="lazy"
                         src={perk.icon}
                         alt={perk.name}
                         className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"

@@ -102,7 +102,7 @@ const PostCard = ({ post }) => {
         {/* Author Avatar */}
         <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 flex-shrink-0 overflow-hidden">
           {post.authorAvatar ? (
-            <img src={post.authorAvatar} alt={post.authorName} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" />
+            <img loading="lazy" src={post.authorAvatar} alt={post.authorName} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-smoke text-xs cursor-pointer hover:opacity-80 transition-opacity">
               {post.authorName?.charAt(0)}
@@ -135,7 +135,7 @@ const PostCard = ({ post }) => {
           {/* Image */}
           {post.imageUrl && (
             <div className="rounded-2xl border border-white/10 overflow-hidden mb-3">
-              <img src={post.imageUrl} alt="Post Attachment" className="w-full h-auto max-h-[500px] object-cover cursor-pointer hover:opacity-90 transition-opacity" />
+              <img loading="lazy" src={post.imageUrl} alt="Post Attachment" className="w-full h-auto max-h-[500px] object-cover cursor-pointer hover:opacity-90 transition-opacity" />
             </div>
           )}
 
@@ -174,7 +174,7 @@ const PostCard = ({ post }) => {
               {user && (
                 <form onSubmit={submitComment} className="flex gap-3 mb-6">
                   <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden shrink-0 mt-1">
-                    <img src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="You" className="w-full h-full object-cover" />
+                    <img loading="lazy" src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`} alt="You" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 relative">
                     <input
@@ -206,7 +206,7 @@ const PostCard = ({ post }) => {
                   <div key={comment.id} className="flex gap-3">
                     <div className="w-8 h-8 rounded-full border border-white/10 overflow-hidden shrink-0">
                       {comment.authorAvatar ? (
-                        <img src={comment.authorAvatar} alt={comment.authorName} className="w-full h-full object-cover" />
+                        <img loading="lazy" src={comment.authorAvatar} alt={comment.authorName} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-smoke text-xs">
                           {comment.authorName?.charAt(0)}
