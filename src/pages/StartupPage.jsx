@@ -20,7 +20,7 @@ const StartupPage = ({ onComplete }) => {
           <img
             src="https://images.steamusercontent.com/ugc/988989114488731806/4F7547A4CD93085C38217C96CEB0E879BE91C4F0/?imw=268&imh=268&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
             alt="Loading..."
-            className="w-32 h-32 object-contain"
+            className="w-64 h-64 object-contain"
           />
         </div>
 
@@ -28,12 +28,6 @@ const StartupPage = ({ onComplete }) => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-dbd-red/5 rounded-full blur-[100px]"></div>
       </div>
 
-      {/* Cinematic Text */}
-      <div className="mt-12 overflow-hidden">
-        <p className="text-white/40 text-[10px] tracking-[0.5em] uppercase font-light animate-pulse italic">
-          Connecting to the Fog
-        </p>
-      </div>
 
       {/* Corner Loading Details */}
       <div className="absolute bottom-6 right-6 sm:bottom-8 sm:right-8 md:bottom-12 md:right-12 flex items-center gap-3 opacity-50">

@@ -1,95 +1,180 @@
-import { db } from './config'
+import { db } from './config';
 import {
-  doc,
   collection,
   addDoc,
-  getDocs,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  onSnapshot,
   query,
-  orderBy
-} from 'firebase/firestore'
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  getDoc,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  increment
+} from 'firebase/firestore';
 
-const postsCollection = collection(db, 'posts')
+// References
+const postsRef = collection(db, 'posts');
 
+/**
+ * Creates a new post in Firestore.
+ * @param {Object} postData { text: string, imageUrl: string, authorId: string, authorName: string, authorAvatar: string }
+ */
 export const createPost = async (postData) => {
-  const docRef = await addDoc(postsCollection, {
-    ...postData,
-    createdAt: new Date().toISOString(),
-    likes: [],
-    dislikes: []
-  })
-  return docRef.id
-}
+  try {
+    const docRef = await addDoc(postsRef, {
+      ...postData,
+      createdAt: serverTimestamp(),
+      likes: 0,
+      likedBy: [],
+      comments: 0
+    });
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating post: ", error);
+    throw error;
+  }
+};
 
-export const getPosts = async () => {
-  const q = query(postsCollection, orderBy('createdAt', 'desc'))
-  const querySnapshot = await getDocs(q)
-  return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-}
-
+/**
+ * Subscribes to real-time updates for posts.
+ * @param {Function} callback Function to call with updated posts array
+ * @returns {Function} Unsubscribe function
+ */
 export const subscribeToPosts = (callback) => {
-  const q = query(postsCollection, orderBy('createdAt', 'desc'))
-  return onSnapshot(q, (snapshot) => {
-    const posts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    callback(posts)
-  })
-}
+  const q = query(postsRef, orderBy('createdAt', 'desc'));
 
-export const updatePost = async (postId, updates) => {
-  const postRef = doc(db, 'posts', postId)
-  await updateDoc(postRef, { ...updates, edited: true })
-}
+  return onSnapshot(q, async (snapshot) => {
+    const postsPromises = snapshot.docs.map(async (postDoc) => {
+      const data = postDoc.data();
+      let currentAvatar = data.authorAvatar;
+      let currentName = data.authorName;
 
-export const deletePost = async (postId) => {
-  await deleteDoc(doc(db, 'posts', postId))
-}
+      // Ensure we get the latest avatar/name for the author if they updated it
+      if (data.authorId) {
+        try {
+          const userRef = doc(db, 'users', data.authorId);
+          const pfpRef = doc(db, 'pfp', data.authorId);
+          const [userSnap, pfpSnap] = await Promise.all([getDoc(userRef), getDoc(pfpRef)]);
 
-export const likePost = async (postId, userId) => {
-  const postRef = doc(db, 'posts', postId)
-  const post = await getDoc(postRef)
-  const currentLikes = post.data().likes || []
-  const currentDislikes = post.data().dislikes || []
+          if (userSnap.exists() && userSnap.data().displayName) {
+            currentName = userSnap.data().displayName;
+          }
+          if (pfpSnap.exists() && pfpSnap.data().pfps) {
+            currentAvatar = pfpSnap.data().pfps;
+          }
+        } catch (err) {
+          console.error("Error fetching latest user details for post:", err);
+        }
+      }
 
-  let newLikes = currentLikes
-  let newDislikes = currentDislikes
+      return {
+        id: postDoc.id,
+        ...data,
+        authorName: currentName,
+        authorAvatar: currentAvatar,
+        // Convert Firestore timestamp to serializable format
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      };
+    });
 
-  if (currentLikes.includes(userId)) {
-    newLikes = currentLikes.filter(id => id !== userId)
-  } else {
-    newLikes = [...currentLikes, userId]
-    newDislikes = currentDislikes.filter(id => id !== userId)
+    const posts = await Promise.all(postsPromises);
+    callback(posts);
+  }, (error) => {
+    console.error("Error subscribing to posts: ", error);
+  });
+};
+
+/**
+ * Toggles a like on a post for a specific user.
+ */
+export const toggleLikePost = async (postId, userId, isCurrentlyLiked) => {
+  const postRef = doc(db, 'posts', postId);
+
+  try {
+    if (isCurrentlyLiked) {
+      await updateDoc(postRef, {
+        likedBy: arrayRemove(userId),
+        likes: increment(-1)
+      });
+    } else {
+      await updateDoc(postRef, {
+        likedBy: arrayUnion(userId),
+        likes: increment(1)
+      });
+    }
+  } catch (error) {
+    console.error("Error toggling like: ", error);
+    throw error;
   }
+};
 
-  await updateDoc(postRef, { likes: newLikes, dislikes: newDislikes })
-}
-
-export const dislikePost = async (postId, userId) => {
-  const postRef = doc(db, 'posts', postId)
-  const post = await getDoc(postRef)
-  const currentLikes = post.data().likes || []
-  const currentDislikes = post.data().dislikes || []
-
-  let newLikes = currentLikes
-  let newDislikes = currentDislikes
-
-  if (currentDislikes.includes(userId)) {
-    newDislikes = currentDislikes.filter(id => id !== userId)
-  } else {
-    newDislikes = [...currentDislikes, userId]
-    newLikes = currentLikes.filter(id => id !== userId)
-  }
-
-  await updateDoc(postRef, { likes: newLikes, dislikes: newDislikes })
-}
-
+/**
+ * Adds a comment to a specific post.
+ */
 export const addComment = async (postId, commentData) => {
-  const commentsCollection = collection(db, 'posts', postId, 'comments')
-  await addDoc(commentsCollection, {
-    ...commentData,
-    createdAt: new Date().toISOString(),
-    likes: []
-  })
-}
+  try {
+    const commentsRef = collection(db, 'posts', postId, 'comments');
+    await addDoc(commentsRef, {
+      ...commentData,
+      createdAt: serverTimestamp()
+    });
+
+    // Increment the comments counter on the post document
+    const postRef = doc(db, 'posts', postId);
+    await updateDoc(postRef, {
+      comments: increment(1)
+    });
+  } catch (error) {
+    console.error("Error adding comment: ", error);
+    throw error;
+  }
+};
+
+/**
+ * Subscribes to comments for a specific post.
+ */
+export const subscribeToComments = (postId, callback) => {
+  const commentsRef = collection(db, 'posts', postId, 'comments');
+  const q = query(commentsRef, orderBy('createdAt', 'asc'));
+
+  return onSnapshot(q, async (snapshot) => {
+    const commentsPromises = snapshot.docs.map(async (commentDoc) => {
+      const data = commentDoc.data();
+      let currentAvatar = data.authorAvatar;
+      let currentName = data.authorName;
+
+      // Ensure latest user details
+      if (data.authorId) {
+        try {
+          const userRef = doc(db, 'users', data.authorId);
+          const pfpRef = doc(db, 'pfp', data.authorId);
+          const [userSnap, pfpSnap] = await Promise.all([getDoc(userRef), getDoc(pfpRef)]);
+
+          if (userSnap.exists() && userSnap.data().displayName) {
+            currentName = userSnap.data().displayName;
+          }
+          if (pfpSnap.exists() && pfpSnap.data().pfps) {
+            currentAvatar = pfpSnap.data().pfps;
+          }
+        } catch (err) {
+          // Skip if error
+        }
+      }
+
+      return {
+        id: commentDoc.id,
+        ...data,
+        authorName: currentName,
+        authorAvatar: currentAvatar,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      };
+    });
+
+    const comments = await Promise.all(commentsPromises);
+    callback(comments);
+  }, (error) => {
+    console.error("Error subscribing to comments: ", error);
+  });
+};

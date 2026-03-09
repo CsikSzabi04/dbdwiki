@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
 import CreatePost from '../components/Feed/CreatePost';
 import PostCard from '../components/Feed/PostCard';
+import { subscribeToPosts, createPost } from '../firebase/posts';
+import { toast } from 'react-hot-toast';
 
 const HomePage = () => {
-  const [posts, setPosts] = useState(() => {
-    const savedPosts = localStorage.getItem('dbd-posts');
-    return savedPosts ? JSON.parse(savedPosts) : [];
-  });
+  const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleCreatePost = (newPost) => {
-    const updatedPosts = [newPost, ...posts];
-    setPosts(updatedPosts);
-    localStorage.setItem('dbd-posts', JSON.stringify(updatedPosts));
+  useEffect(() => {
+    // Subscribe to real-time posts from Firestore
+    const unsubscribe = subscribeToPosts((updatedPosts) => {
+      setPosts(updatedPosts);
+      setIsLoading(false);
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
+  const handleCreatePost = async (newPostData) => {
+    try {
+      await createPost(newPostData);
+      toast.success("Post published to the Fog!");
+    } catch (error) {
+      toast.error("Failed to publish post.");
+    }
   };
 
   return (
@@ -28,7 +42,12 @@ const HomePage = () => {
       <CreatePost onSubmit={handleCreatePost} />
 
       <div className="divide-y divide-white/5 pb-20">
-        {posts.length > 0 ? (
+        {isLoading ? (
+          <div className="py-20 text-center flex flex-col items-center justify-center gap-4">
+            <div className="w-8 h-8 border-2 border-dbd-red rounded-full border-t-transparent animate-spin"></div>
+            <p className="text-smoke text-sm animate-pulse">Loading the Fog...</p>
+          </div>
+        ) : posts.length > 0 ? (
           posts.map(post => (
             <PostCard key={post.id} post={post} />
           ))
