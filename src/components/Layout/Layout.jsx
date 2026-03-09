@@ -11,7 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const bottomNavItems = [
-    { name: 'Home', icon: HomeIcon, path: '/home' },
+    { name: 'Home', icon: HomeIcon, path: '/' },
     { name: 'News', icon: NewspaperIcon, path: '/news' },
     { name: 'Wiki', icon: BookOpenIcon, path: '/wiki' },
     { name: 'Builds', icon: BeakerIcon, path: '/builds' },
@@ -65,3 +65,4 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
+
