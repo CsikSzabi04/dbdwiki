@@ -21,10 +21,10 @@ const bottomNavItems = [
 const Layout = ({ children }) => {
     return (
         <div className="min-h-screen bg-obsidian flex justify-center">
-            <div className="w-full max-w-[1600px] flex">
+            <div className="w-full max-w-[1700px] flex">
 
                 {/* Left Sidebar — hidden on mobile, icon-only on md, full on lg */}
-                <aside className="hidden md:flex md:w-[80px] lg:w-[260px] h-screen sticky top-0 border-r border-white/5 py-4 px-2 lg:px-4 flex-col justify-between shrink-0">
+                <aside className="hidden md:flex md:w-[100px] lg:w-[300px] h-screen sticky top-0 border-r border-white/5 py-4 px-2 lg:px-4 flex-col justify-between shrink-0">
                     <Sidebar />
                 </aside>
 
@@ -34,7 +34,7 @@ const Layout = ({ children }) => {
                 </main>
 
                 {/* Right Sidebar (Hidden on small screens) */}
-                <aside className="hidden xl:block w-[350px] h-screen sticky top-0 px-6 py-4 overflow-y-auto scrollbar-none shrink-0">
+                <aside className="hidden xl:block w-[400px] h-screen sticky top-0 px-6 py-4 overflow-y-auto scrollbar-none shrink-0">
                     <CommunityLegends />
                 </aside>
 
@@ -65,4 +65,3 @@ const Layout = ({ children }) => {
 };
 
 export default Layout;
-

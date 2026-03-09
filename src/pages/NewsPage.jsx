@@ -20,7 +20,7 @@ const NewsPage = () => {
                     {/* Thematic top/bottom borders */}
                     <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-dbd-red to-transparent opacity-50 z-10" />
 
-                    <div className="relative w-full max-w-7xl mx-auto">
+                    <div className="relative w-full max-w-[1600px] mx-auto">
                         <div className="aspect-w-16 aspect-h-9 md:aspect-video w-full">
                             <iframe
                                 src="https://www.youtube.com/embed/GBHMeo6_RRU?si=2T2J_f2-r22e2-M&autoplay=1&mute=1"
@@ -42,7 +42,7 @@ const NewsPage = () => {
                     <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-50 z-10" />
                 </section>
 
-                <section className="max-w-7xl mx-auto w-full">
+                <section className="max-w-[1600px] mx-auto w-full">
                     <NewsFeed />
                 </section>
             </div>

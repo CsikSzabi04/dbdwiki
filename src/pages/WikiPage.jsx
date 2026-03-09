@@ -50,7 +50,7 @@ const WikiPage = () => {
             {/* ONLY show search/filter header if NO character is selected */}
             {!selectedCharacter && (
                 <div className="sticky top-0 z-30 bg-obsidian-light/80 backdrop-blur-xl border-b border-white/5 p-3 sm:p-4 shadow-xl">
-                    <div className="max-w-7xl mx-auto">
+                    <div className="max-w-[1600px] mx-auto">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
                             <h2 className="text-2xl sm:text-3xl font-black italic tracking-tighter drop-shadow-md">WIKI<span className="text-dbd-red">.</span></h2>
                             <div className="flex gap-2 w-full md:w-auto">
@@ -111,7 +111,7 @@ const WikiPage = () => {
                 </div>
             )}
 
-            <div className={`max-w-7xl mx-auto p-4 md:p-6 lg:p-8 ${selectedCharacter ? 'pt-8' : ''}`}>
+            <div className={`max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8 ${selectedCharacter ? 'pt-8' : ''}`}>
                 {/* Render Profile or Grid based on state */}
                 {selectedCharacter ? (
                     <CharacterProfile

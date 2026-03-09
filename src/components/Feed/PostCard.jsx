@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, memo } from 'react';
 import {
   ChatBubbleLeftIcon,
   ShareIcon,
@@ -21,7 +21,7 @@ const allCharacters = [...survivorsData, ...killersData].filter(c => c.imgs?.por
 
 const ADMIN_UID = 'm5bQpvVyXrhtTSvdmOA4rbeDsFb2';
 
-const PostCard = ({ post }) => {
+const PostCard = memo(({ post, isPriority = false }) => {
   const { user, userProfile } = useAuth();
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(post.likes || 0);
@@ -177,7 +177,7 @@ const PostCard = ({ post }) => {
 
       await addComment(post.id, {
         text: newComment.trim(),
-        authorId: effectiveUid,
+        authorId: user?.uid || 'anonymous',
         authorName,
         authorAvatar
       });
@@ -206,7 +206,14 @@ const PostCard = ({ post }) => {
           {/* Author Avatar */}
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 flex-shrink-0 overflow-hidden">
             {post.authorAvatar ? (
-              <img loading="lazy" src={post.authorAvatar} alt={post.authorName} className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" />
+              <img
+                loading={isPriority ? "eager" : "lazy"}
+                fetchPriority={isPriority ? "high" : "auto"}
+                decoding={isPriority ? "sync" : "async"}
+                src={post.authorAvatar}
+                alt={post.authorName}
+                className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+              />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-smoke text-xs cursor-pointer hover:opacity-80 transition-opacity">
                 {post.authorName?.charAt(0)}
@@ -317,14 +324,16 @@ const PostCard = ({ post }) => {
             {/* Image */}
             {post.imageUrl && (
               <div
-                className="rounded-2xl border border-white/10 overflow-hidden mb-3 cursor-pointer group/img"
+                className="rounded-2xl border border-white/10 overflow-hidden mb-3 cursor-pointer group/img bg-white/5 aspect-video relative"
                 onClick={() => setIsImageModalOpen(true)}
               >
                 <img
-                  loading="lazy"
+                  loading={isPriority ? "eager" : "lazy"}
+                  fetchPriority={isPriority ? "high" : "auto"}
+                  decoding={isPriority ? "sync" : "async"}
                   src={post.imageUrl}
                   alt="Post Attachment"
-                  className="w-full h-auto max-h-[500px] object-cover hover:opacity-90 transition-opacity"
+                  className="w-full h-full object-cover hover:opacity-90 transition-opacity"
                 />
               </div>
             )}
@@ -457,6 +466,6 @@ const PostCard = ({ post }) => {
       )}
     </>
   );
-};
+});
 
 export default PostCard;

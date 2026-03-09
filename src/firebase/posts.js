@@ -12,15 +12,49 @@ import {
   deleteDoc,
   arrayUnion,
   arrayRemove,
-  increment
+  increment,
+  where,
+  limit
 } from 'firebase/firestore';
 
 // References
 const postsRef = collection(db, 'posts');
 
+// Local cache for user data to avoid redundant Firestore calls (N+1 problem)
+const userCache = new Map();
+
+/**
+ * Helper to fetch latest user data with caching
+ */
+const getLatestAuthorData = async (authorId) => {
+  if (!authorId || authorId.startsWith('guest_') || authorId === 'anonymous') return null;
+
+  // Return from cache if available
+  if (userCache.has(authorId)) {
+    return userCache.get(authorId);
+  }
+
+  try {
+    const userRef = doc(db, 'users', authorId);
+    const pfpRef = doc(db, 'pfp', authorId);
+    const [userSnap, pfpSnap] = await Promise.all([getDoc(userRef), getDoc(pfpRef)]);
+
+    const result = {
+      name: userSnap.exists() ? userSnap.data().displayName : null,
+      avatar: pfpSnap.exists() ? pfpSnap.data().pfps : null
+    };
+
+    // Store in cache
+    userCache.set(authorId, result);
+    return result;
+  } catch (err) {
+    console.warn("Author data fetch error:", err);
+    return null;
+  }
+};
+
 /**
  * Creates a new post in Firestore.
- * @param {Object} postData { text: string, imageUrl: string, authorId: string, authorName: string, authorAvatar: string }
  */
 export const createPost = async (postData) => {
   try {
@@ -40,52 +74,90 @@ export const createPost = async (postData) => {
 
 /**
  * Subscribes to real-time updates for posts.
- * @param {Function} callback Function to call with updated posts array
- * @returns {Function} Unsubscribe function
  */
 export const subscribeToPosts = (callback) => {
-  const q = query(postsRef, orderBy('createdAt', 'desc'));
+  // Limit to 15 posts for massive LCP improvement
+  const q = query(postsRef, orderBy('createdAt', 'desc'), limit(15));
 
   return onSnapshot(q, async (snapshot) => {
-    const postsPromises = snapshot.docs.map(async (postDoc) => {
+    // Phase 1: Immediate callback with raw data for instant render
+    const initialPosts = snapshot.docs.map(postDoc => {
       const data = postDoc.data();
-      let currentAvatar = data.authorAvatar;
-      let currentName = data.authorName;
-
-      // Ensure we get the latest avatar/name for the author if they updated it
-      // Skip for anonymous bots
-      if (data.authorId && !data.authorId.startsWith('guest_') && data.authorId !== 'anonymous') {
-        try {
-          const userRef = doc(db, 'users', data.authorId);
-          const pfpRef = doc(db, 'pfp', data.authorId);
-          const [userSnap, pfpSnap] = await Promise.all([getDoc(userRef), getDoc(pfpRef)]);
-
-          if (userSnap.exists() && userSnap.data().displayName) {
-            currentName = userSnap.data().displayName;
-          }
-          if (pfpSnap.exists() && pfpSnap.data().pfps) {
-            currentAvatar = pfpSnap.data().pfps;
-          }
-        } catch (err) {
-          console.error("Error fetching latest user details for post:", err);
-        }
-      }
-
       return {
         id: postDoc.id,
         ...data,
-        authorName: currentName,
-        authorAvatar: currentAvatar,
-        // Convert Firestore timestamp to serializable format
         createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
       };
     });
 
-    const posts = await Promise.all(postsPromises);
-    callback(posts);
+    // Provide initial data immediately to stop LCP clock
+    callback(initialPosts);
+
+    // Phase 2: Background hydration of author details (cached)
+    const hydratedPostsPromises = snapshot.docs.map(async (postDoc) => {
+      const data = postDoc.data();
+      const authorInfo = await getLatestAuthorData(data.authorId);
+
+      return {
+        id: postDoc.id,
+        ...data,
+        authorName: authorInfo?.name || data.authorName,
+        authorAvatar: authorInfo?.avatar || data.authorAvatar,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      };
+    });
+
+    const hydratedPosts = await Promise.all(hydratedPostsPromises);
+    callback(hydratedPosts);
   }, (error) => {
     if (error.code !== 'permission-denied') {
       console.error("Error subscribing to posts: ", error);
+    }
+  });
+};
+
+/**
+ * Subscribes to posts created by a specific user.
+ */
+export const subscribeToUserPosts = (userId, callback) => {
+  const q = query(
+    postsRef,
+    where('authorId', '==', userId),
+    orderBy('createdAt', 'desc'),
+    limit(15)
+  );
+
+  return onSnapshot(q, async (snapshot) => {
+    // Immediate render with raw data
+    const initialPosts = snapshot.docs.map(postDoc => {
+      const data = postDoc.data();
+      return {
+        id: postDoc.id,
+        ...data,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      };
+    });
+    callback(initialPosts);
+
+    // Hydrate author details in background
+    const hydratedPostsPromises = snapshot.docs.map(async (postDoc) => {
+      const data = postDoc.data();
+      const authorInfo = await getLatestAuthorData(data.authorId);
+
+      return {
+        id: postDoc.id,
+        ...data,
+        authorName: authorInfo?.name || data.authorName,
+        authorAvatar: authorInfo?.avatar || data.authorAvatar,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      };
+    });
+
+    const hydratedPosts = await Promise.all(hydratedPostsPromises);
+    callback(hydratedPosts);
+  }, (error) => {
+    if (error.code !== 'permission-denied') {
+      console.error("Error subscribing to user posts: ", error);
     }
   });
 };

@@ -131,7 +131,7 @@ const AvailableOnPage = () => {
         <Layout>
             {/* Sticky header with rating badges */}
             <div className="sticky top-0 z-30 bg-obsidian-light/80 backdrop-blur-xl border-b border-white/5 p-3 sm:p-4 shadow-xl">
-                <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+                <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-4">
                     <h2 className="text-2xl sm:text-3xl font-black italic tracking-tighter drop-shadow-md">
                         AVAILABLE ON<span className="text-dbd-red">.</span>
                     </h2>
@@ -148,7 +148,7 @@ const AvailableOnPage = () => {
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto p-4 md:p-6 lg:p-8">
+            <div className="max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8">
 
                 {/* Hero intro with DBD logo */}
                 <div className="mb-10 mt-4 text-center">

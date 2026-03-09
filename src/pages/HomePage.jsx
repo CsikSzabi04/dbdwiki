@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
 import CreatePost from '../components/Feed/CreatePost';
 import PostCard from '../components/Feed/PostCard';
+import PostSkeleton from '../components/Feed/PostSkeleton';
 import { subscribeToPosts, createPost } from '../firebase/posts';
 import { toast } from 'react-hot-toast';
 
@@ -43,13 +44,12 @@ const HomePage = () => {
 
       <div className="divide-y divide-white/5 pb-20">
         {isLoading ? (
-          <div className="py-20 text-center flex flex-col items-center justify-center gap-4">
-            <div className="w-8 h-8 border-2 border-dbd-red rounded-full border-t-transparent animate-spin"></div>
-            <p className="text-smoke text-sm animate-pulse">Loading the Fog...</p>
+          <div className="divide-y divide-white/5">
+            {[...Array(5)].map((_, i) => <PostSkeleton key={i} />)}
           </div>
         ) : posts.length > 0 ? (
-          posts.map(post => (
-            <PostCard key={post.id} post={post} />
+          posts.map((post, index) => (
+            <PostCard key={post.id} post={post} isPriority={index === 0} />
           ))
         ) : (
           <div className="py-20 text-center">
