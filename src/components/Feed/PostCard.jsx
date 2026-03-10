@@ -35,6 +35,7 @@ const PostCard = memo(({ post, isPriority = false }) => {
   const [editContent, setEditContent] = useState(post.content);
   const [isSaving, setIsSaving] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
+  const [expandedComments, setExpandedComments] = useState({}); // ÚJ: Kommentek kibontásának követése
   const menuRef = useRef(null);
 
   const isOwner = user?.uid === post.authorId;
@@ -201,7 +202,7 @@ const PostCard = memo(({ post, isPriority = false }) => {
 
   return (
     <>
-      <div className="p-3 sm:p-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors group">
+      <div className={`p-3 sm:p-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors group relative ${showMenu ? 'z-[100]' : 'z-auto'}`}>
         <div className="flex gap-3 sm:gap-4">
           {/* Author Avatar */}
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 flex-shrink-0 overflow-hidden">
@@ -246,7 +247,7 @@ const PostCard = memo(({ post, isPriority = false }) => {
                 </button>
 
                 {showMenu && (
-                  <div className="absolute right-0 mt-1 w-48 bg-obsidian-light border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-150">
+                  <div className="absolute right-0 mt-1 w-48 bg-obsidian border border-white/10 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] z-[110] overflow-hidden animate-in fade-in zoom-in duration-150 backdrop-blur-md">
                     {canManage ? (
                       <>
                         <button
@@ -413,10 +414,14 @@ const PostCard = memo(({ post, isPriority = false }) => {
                       type="text"
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
-                      placeholder={user ? "Post your reply..." : "Reply as bot@gmail.com..."}
+                      placeholder={user ? "Reply (max 100 chars)..." : "Reply as bot (max 100)..."}
                       disabled={isSubmittingComment}
+                      maxLength={100}
                       className="w-full bg-black/40 border border-white/10 rounded-full px-4 py-2.5 text-sm text-white focus:outline-none focus:border-dbd-red transition-colors placeholder:text-smoke/50 disabled:opacity-50"
                     />
+                    <div className="absolute right-12 top-11 text-[8px] font-bold text-smoke/30 italic">
+                      {newComment.length} / 100
+                    </div>
                     <button
                       type="submit"
                       disabled={!newComment.trim() || isSubmittingComment}
@@ -452,7 +457,21 @@ const PostCard = memo(({ post, isPriority = false }) => {
                             {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                         </div>
-                        <p className="text-slate-300 text-sm break-words whitespace-pre-wrap">{comment.text}</p>
+                        <div>
+                          <p className="text-slate-300 text-sm break-words whitespace-pre-wrap leading-relaxed">
+                            {comment.text.length > 50 && !expandedComments[comment.id]
+                              ? `${comment.text.slice(0, 50)}...`
+                              : comment.text}
+                          </p>
+                          {comment.text.length > 50 && (
+                            <button
+                              onClick={() => setExpandedComments(prev => ({ ...prev, [comment.id]: !prev[comment.id] }))}
+                              className="text-dbd-red text-[9px] font-bold uppercase tracking-widest mt-1 hover:underline active:scale-95 transition-all"
+                            >
+                              {expandedComments[comment.id] ? "Kevesebb" : "Mutat többet"}
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   ))}

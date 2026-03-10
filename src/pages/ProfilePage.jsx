@@ -7,6 +7,7 @@ import { subscribeToUserPosts, createPost } from '../firebase/posts';
 import { getUserBuilds } from '../firebase/users';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+
 import {
     UserIcon,
     EnvelopeIcon,
@@ -206,10 +207,14 @@ const ProfilePage = () => {
             <div className="max-w-[1200px] mx-auto p-3 sm:p-4 md:p-8 animate-fade-in relative">
 
                 {/* Header Banner */}
-                <div className="relative w-full h-40 sm:h-56 md:h-80 rounded-t-2xl overflow-hidden border border-white/10 z-0 shadow-2xl">
+                <div
+
+                    className="relative w-full h-40 sm:h-56 md:h-80 rounded-t-2xl overflow-hidden border border-white/10 z-0 shadow-2xl"
+                >
                     <img
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7rotkbp70_Hd94dmciPGGIoy0w9AYsz2TKA&s"
                         alt="Profile Cover"
+
                         className="w-full h-full object-cover opacity-80"
                     />
                     <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-obsidian via-obsidian/60 to-transparent"></div>
@@ -217,14 +222,15 @@ const ProfilePage = () => {
                 </div>
 
                 {/* Profile Info Section */}
-                <div className="relative glass-card border flex flex-col items-center md:items-start md:flex-row gap-4 sm:gap-6 md:gap-8 border-white/10 rounded-b-2xl px-4 sm:px-6 md:px-10 pb-4 sm:pb-6 z-10 -mt-12 sm:-mt-16 md:-mt-24 pt-16 sm:pt-20 md:pt-24 shadow-2xl">
+                <div id="profile-cover" className="relative glass-card border flex flex-col items-center md:items-start md:flex-row gap-4 sm:gap-6 md:gap-8 border-white/10 rounded-b-2xl px-4 sm:px-6 md:px-10 pb-4 sm:pb-6 z-10 -mt-16 sm:-mt-20 md:-mt-24 pt-20 sm:pt-24 md:pt-28 shadow-2xl">
 
-                    <div className="absolute -top-12 sm:-top-16 md:top-2 left-1/2 -translate-x-1/2 md:left-5 md:translate-x-0 z-50">
+                    <div className="ter p-15 sm:p-20 md:p-0 lg:p-0 xl:p-0  absolute -top-12 sm:-top-16 md:top-2 left-1/2 -translate-x-1/2 md:left-5 md:translate-x-0 z-50">
                         <div
                             onClick={() => setIsAvatarModalOpen(true)}
-                            className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-full bg-obsidian border-4 border-obsidian shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden relative group cursor-pointer"
+                            className=" w-24 h-24 sm:w-32 sm:h-32 md:w-36 lg:w-40 md:h-36 lg:h-40 rounded-full bg-obsidian border-4 border-obsidian shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden relative group cursor-pointer"
                         >
                             <img
+                                id="profile-cover"
                                 src={userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`}
                                 alt="Profile Avatar"
                                 className={`w-full h-full object-cover relative z-10 transition-transform duration-500 ${isUpdatingAvatar ? 'opacity-50 blur-sm' : 'group-hover:scale-110'}`}
@@ -239,13 +245,13 @@ const ProfilePage = () => {
                                 </div>
                             )}
                         </div>
-                        <div className="absolute bottom-2 right-2 md:bottom-3 md:right-3 w-5 h-5 rounded-full bg-green-500 border-4 border-obsidian shadow-[0_0_15px_rgba(34,197,94,0.6)] z-40"></div>
+                        <div className="potty absolute bottom-15 right-14 sm:bottom-20 sm:right-20 md:bottom-2 md:right-2 w-5 h-5 rounded-full bg-green-500 border-4 border-obsidian shadow-[0_0_15px_rgba(34,197,94,0.6)] z-40"></div>
                     </div>
 
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 w-full">
-                        <div className="hidden md:block w-36 h-2"></div>
+                    <div className="nevter p-10 sm:p-13  md:p-0 lg:p-0 xl:p-0 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 w-full">
+                        <div className="hidden md:block w-32 lg:w-36 h-2"></div>
                         <div className="text-center md:text-left flex-1">
-                            <h1 className="text-2xl sm:text-3xl md:text-4xl font-black italic tracking-tighter text-white drop-shadow-md">
+                            <h1 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-black italic tracking-tighter text-white drop-shadow-md">
                                 {displayName}
                             </h1>
                             <p className="text-dbd-red font-bold uppercase tracking-widest text-xs mt-1 flex items-center justify-center md:justify-start gap-2">
@@ -361,7 +367,7 @@ const ProfilePage = () => {
                                     {[...Array(3)].map((_, i) => <PostSkeleton key={i} />)}
                                 </div>
                             ) : myPosts.length > 0 ? (
-                                <div className="glass-card border border-white/5 overflow-hidden divide-y divide-white/5">
+                                <div className="glass-card border border-white/5 divide-y divide-white/5">
                                     {myPosts.map((post, index) => (
                                         <PostCard key={post.id} post={post} isPriority={index === 0} />
                                     ))}
