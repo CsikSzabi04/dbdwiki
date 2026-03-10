@@ -96,7 +96,7 @@
         "killerCode": "all",
         "killerName": "All",
         "description": "Your fervent care of the Hooks found in the Basement has aroused The Entity's interest.\nAt the start of the Trial, 4 random Hooks, as well as the Basement Hooks, are changed into Scourge Hooks:\nThe Auras of Scourge Hooks are revealed to you in white.\nEach time a Survivor is hooked on a Scourge Hook, the following effect applies whenever you are farther than 24 metres from the hooked Survivor:\nAccelerates the Sacrifice Process by 10/15/20 %.\n\"Then you will know that there is no escape. When hanging in the depths, you face the dark one.\"",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/f/f5/IconPerks_monstrousShrine.png"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_scourgeHookMonstrousShrine.png?91c64c"
     },
     {
         "id": 11,
@@ -1005,7 +1005,7 @@
         "killerCode": "thexenomorph",
         "killerName": "The Xenomorph",
         "description": "When you open a Locker, all Survivors within 24 meters scream and reveal their location, and they are afflicted with the Blindness Status Effect for 20/25/30 seconds. Ultimate Weapon has a cooldown of 40 seconds.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_ultimateweapon.png?38d700"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_ultimateWeapon.png?77fee9"
     },
     {
         "id": 112,
@@ -1032,7 +1032,7 @@
         "killerCode": "thegoodguy",
         "killerName": "The Good Guy",
         "description": "A Hex that turns the Survivors' tactics against them. Whenever a Survivor blinds or stuns you, all Survivors suffer from the Blindness and Exhausted Status Effects for 30/35/40 seconds. The Hex effects persist as long as the related Hex Totem is standing.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/6/64/IconPerks_hexTwoCanPlay.png/revision/latest/scale-to-width-down/256?cb=20231108172944"
+        "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgqgkSHoLTjLP61LLwMv4S3lEPKeSP71JnEg&s"
     },
     {
         "id": 115,
@@ -1059,7 +1059,7 @@
         "killerCode": "theunknown",
         "killerName": "The Unknown",
         "description": "You are where they least expect. After hooking a Survivor, you become Undetectable for 15/20/25 seconds. The next Basic Attack you make during this time will apply the Exposed Status Effect.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_unexpected.png?38d700"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_unforeseen.png?b427d2"
     },
     {
         "id": 118,
@@ -1095,7 +1095,7 @@
         "killerCode": "thel ich",
         "killerName": "The Lich",
         "description": "You sense the flow of magic. Whenever a Survivor picks up an Item, their Aura is revealed to you for 4/5/6 seconds. If they drop the Item, it becomes blocked by The Entity for 60 seconds, and any Survivor near it suffers from the Hindered Status Effect.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_weaveattunement.png?38d700"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_weaveAttunement.png?d7177c"
     },
     {
         "id": 122,
@@ -1113,7 +1113,7 @@
         "killerCode": "thel ich",
         "killerName": "The Lich",
         "description": "You ascend with each sacrifice. For each Survivor sacrificed or killed, you gain a permanent 2% Haste and a 2% reduction to all cooldowns, up to a maximum of 8/10/12%.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/a/a3/IconPerks_languidTouch.png/revision/latest?cb=20240514174201"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_languidTouch.png?c15e67"
     },
     {
         "id": 124,
@@ -1140,7 +1140,7 @@
         "killerCode": "thehoundmaster",
         "killerName": "The Houndmaster",
         "description": "Your persistence is legendary. At the start of the Trial, 4 random Hooks become Scourge Hooks. When a Survivor is unhooked from a Scourge Hook, they suffer from the Exposed Status Effect for 20/25/30 seconds. Additionally, you see the Aura of the unhooked Survivor for 4 seconds.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/2/26/IconPerks_scourgeHookGiftOfPain.png/revision/latest?cb=20210819105650"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_scourgeHookJaggedCompass.png?38db55s"
     },
     {
         "id": 127,

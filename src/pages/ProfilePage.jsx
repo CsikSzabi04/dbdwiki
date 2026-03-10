@@ -3,7 +3,8 @@ import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/Layout/Layout';
 import PostCard from '../components/Feed/PostCard';
 import PostSkeleton from '../components/Feed/PostSkeleton';
-import { subscribeToUserPosts } from '../firebase/posts';
+import { subscribeToUserPosts, createPost } from '../firebase/posts';
+import { getUserBuilds } from '../firebase/users';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import {
@@ -14,7 +15,8 @@ import {
     TrophyIcon,
     XMarkIcon,
     PhotoIcon,
-    ChatBubbleLeftRightIcon
+    ChatBubbleLeftRightIcon,
+    ShareIcon
 } from '@heroicons/react/24/outline';
 
 // Load static characters for avatars
@@ -29,6 +31,15 @@ const allAvatars = [...survivorsData, ...killersData]
         portrait: char.imgs.portrait
     }));
 
+const getPrestigeLevel = (postCount) => {
+    if (postCount < 10) return 1;
+    if (postCount < 25) return 2;
+    if (postCount < 50) return 3;
+    if (postCount < 75) return 4;
+    if (postCount < 100) return 5;
+    return 6 + Math.floor((postCount - 100) / 50);
+};
+
 const ProfilePage = () => {
     const { user, userProfile, loading, updateAvatar, updateProfileInfo } = useAuth();
     const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
@@ -41,6 +52,16 @@ const ProfilePage = () => {
     const [myPosts, setMyPosts] = useState([]);
     const [isPostsLoading, setIsPostsLoading] = useState(true);
 
+    // Builds state
+    const [savedBuilds, setSavedBuilds] = useState([]);
+    const [isBuildsLoading, setIsBuildsLoading] = useState(true);
+
+    // Share Build Modal state
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [selectedBuildToShare, setSelectedBuildToShare] = useState(null);
+    const [shareText, setShareText] = useState('');
+    const [isSharing, setIsSharing] = useState(false);
+
     useEffect(() => {
         if (!user?.uid) return;
 
@@ -52,6 +73,23 @@ const ProfilePage = () => {
 
         return () => unsubscribe();
     }, [user?.uid]);
+
+    // Fetch user builds
+    useEffect(() => {
+        const fetchBuilds = async () => {
+            if (!user?.uid) return;
+            try {
+                setIsBuildsLoading(true);
+                const builds = await getUserBuilds(user.uid);
+                setSavedBuilds(builds);
+            } catch (error) {
+                console.error("Error fetching builds:", error);
+            } finally {
+                setIsBuildsLoading(false);
+            }
+        };
+        fetchBuilds();
+    }, [user?.uid, isShareModalOpen]); // refetch when share modal closes, just to have fresh data though probably not strictly needed
 
     if (!loading && !user) {
         return <Navigate to="/login" replace />;
@@ -118,7 +156,50 @@ const ProfilePage = () => {
         }
     };
 
-    const tabs = ['Overview', 'My Posts'];
+    const handleShareBuildClick = (build) => {
+        setSelectedBuildToShare(build);
+        setShareText(`Check out my new ${build.role} build: ${build.buildName}! It has a strength of ${build.strength}%.`);
+        setIsShareModalOpen(true);
+    };
+
+    const handleShareSubmit = async (e) => {
+        e.preventDefault();
+        if (!shareText.trim() || !selectedBuildToShare) return;
+
+        setIsSharing(true);
+        try {
+            // Include build data in the post content
+            // Assuming post display logic can parse this or we just append it textually, 
+            // but for a rich display we can save the build object in the post.
+
+            // Format a textual representation for the feed (simpler approach if feed only supports text/images)
+            const buildPerksText = selectedBuildToShare.perks.map(p => p.name).join(', ');
+            const fullPostContent = `${shareText.trim()}\n\nBuild: ${selectedBuildToShare.buildName}\nRole: ${selectedBuildToShare.role.toUpperCase()}\nStrength: ${selectedBuildToShare.strength}%\nPerks: ${buildPerksText}`;
+
+            await createPost({
+                content: fullPostContent,
+                authorId: user.uid,
+                authorName: displayName,
+                authorPhoto: userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`,
+                likes: [],
+                comments: [],
+                buildData: selectedBuildToShare // store it cleanly if Feed wants to render rich build card later
+            });
+
+            toast.success("Build shared successfully!");
+            setIsShareModalOpen(false);
+            setSelectedBuildToShare(null);
+            setShareText('');
+            setActiveTab('My Posts'); // switch to posts to see it
+        } catch (error) {
+            console.error("Error sharing build:", error);
+            toast.error("Failed to share build.");
+        } finally {
+            setIsSharing(false);
+        }
+    };
+
+    const tabs = ['Overview', 'My Posts', 'My Builds'];
 
     return (
         <Layout>
@@ -235,12 +316,12 @@ const ProfilePage = () => {
                                         <p className="text-[10px] text-smoke font-bold uppercase tracking-widest mt-1">Posts Created</p>
                                     </div>
                                     <div className="bg-black/40 border border-white/5 p-4 rounded-xl text-center hover:border-white/20 transition-all cursor-default group/stat">
-                                        <p className="text-3xl font-black text-white group-hover/stat:text-blue-400 transition-colors">0</p>
+                                        <p className="text-3xl font-black text-white group-hover/stat:text-blue-400 transition-colors">{savedBuilds.length}</p>
                                         <p className="text-[10px] text-smoke font-bold uppercase tracking-widest mt-1">Builds Saved</p>
                                     </div>
                                     <div className="bg-black/40 border border-white/5 p-4 rounded-xl text-center hover:border-white/20 transition-all cursor-default col-span-2 relative overflow-hidden group/grade">
                                         <div className="relative z-10">
-                                            <p className="text-3xl font-black text-dbd-red drop-shadow-[0_0_10px_rgba(255,18,18,0.5)]">Prestige 1</p>
+                                            <p className="text-3xl font-black text-dbd-red drop-shadow-[0_0_10px_rgba(255,18,18,0.5)]">Prestige {getPrestigeLevel(myPosts.length)}</p>
                                             <p className="text-[10px] text-smoke font-bold uppercase tracking-widest mt-1">Current Grade</p>
                                         </div>
                                         <div className="absolute inset-0 bg-gradient-to-r from-dbd-red/5 to-transparent translate-x-[-100%] group-hover/grade:translate-x-[100%] transition-transform duration-1000"></div>
@@ -309,11 +390,65 @@ const ProfilePage = () => {
                     )}
 
                     {activeTab === 'My Builds' && (
-                        <div className="animate-fade-in text-center py-16 glass-card border border-white/10">
-                            <TrophyIcon className="w-12 h-12 text-smoke/30 mx-auto mb-4" />
-                            <h3 className="text-xl font-black italic uppercase text-white mb-2">No Equipment Registered</h3>
-                            <p className="text-smoke text-sm max-w-sm mx-auto mb-6">You haven't saved any perk loadouts yet. Visit the Perk Wiki to experiment with synergies!</p>
-                            <a href="/wiki" className="inline-block px-8 py-3 border border-dbd-red text-dbd-red text-xs font-black uppercase tracking-[0.2em] rounded-xl hover:bg-dbd-red/10 transition-all">Browse Perks</a>
+                        <div className="animate-fade-in space-y-4">
+                            {isBuildsLoading ? (
+                                <div className="text-center py-16">
+                                    <div className="w-8 h-8 border-2 border-dbd-red rounded-full border-t-transparent animate-spin mx-auto"></div>
+                                </div>
+                            ) : savedBuilds.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {savedBuilds.map((build) => {
+                                        const accentColor = build.role === 'killer' ? 'dbd-red' : 'blue-500';
+
+                                        // Category logic from StrengthMeter
+                                        let category = 'Best';
+                                        if (build.strength <= 25) category = 'Weak';
+                                        else if (build.strength <= 50) category = 'Balanced';
+                                        else if (build.strength <= 75) category = 'Good';
+                                        else if (build.strength <= 85) category = 'Strong';
+
+                                        return (
+                                            <div key={build.id} className={`glass-card p-5 border border-white/10 hover:border-${accentColor}/50 transition-all group flex flex-col justify-between`}>
+                                                <div>
+                                                    <div className="flex justify-between items-start mb-3">
+                                                        <h4 className="text-lg font-black text-white italic truncate pr-2">{build.buildName}</h4>
+                                                        <span className={`px-2 py-1 bg-${accentColor}/20 text-${accentColor} text-[10px] font-bold uppercase tracking-widest rounded`}>
+                                                            {build.role}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-3 mb-4">
+                                                        <div className="text-2xl font-black text-white">{build.strength}%</div>
+                                                        <div className={`text-xs font-bold uppercase text-${accentColor}`}>{category}</div>
+                                                    </div>
+
+                                                    <div className="flex gap-2 mb-6">
+                                                        {build.perks && build.perks.map((perk, i) => (
+                                                            <div key={i} className="w-10 h-10 rounded bg-black/40 border border-white/10 p-1 tooltip-trigger relative">
+                                                                <img src={perk.icon} alt={perk.name} className="w-full h-full object-cover rounded-sm" title={perk.name} />
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => handleShareBuildClick(build)}
+                                                    className="w-full py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-bold uppercase tracking-widest text-white flex items-center justify-center gap-2 transition-colors"
+                                                >
+                                                    <ShareIcon className="w-4 h-4" /> Share Build
+                                                </button>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div className="text-center py-16 glass-card border border-white/10">
+                                    <TrophyIcon className="w-12 h-12 text-smoke/30 mx-auto mb-4" />
+                                    <h3 className="text-xl font-black italic uppercase text-white mb-2">No Equipment Registered</h3>
+                                    <p className="text-smoke text-sm max-w-sm mx-auto mb-6">You haven't saved any perk loadouts yet. Visit the Perk Wiki to experiment with synergies!</p>
+                                    <a href="/wiki" className="inline-block px-8 py-3 border border-dbd-red text-dbd-red text-xs font-black uppercase tracking-[0.2em] rounded-xl hover:bg-dbd-red/10 transition-all">Browse Perks</a>
+                                </div>
+                            )}
                         </div>
                     )}
                 </div>
@@ -379,6 +514,7 @@ const ProfilePage = () => {
                                     placeholder="Enter display name"
                                     required
                                 />
+                                <div className="text-right text-[10px] text-smoke mt-1">{editForm.displayName.length} / 25</div>
                             </div>
                             <div>
                                 <label className="block text-[10px] font-bold uppercase tracking-widest text-smoke mb-2">Biography</label>
@@ -400,6 +536,62 @@ const ProfilePage = () => {
                                     className="px-6 py-2.5 bg-dbd-red text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-dbd-red/80 transition-all disabled:opacity-50 min-w-[120px]"
                                 >
                                     {isSavingProfile ? <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin mx-auto"></div> : "Save Changes"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Share Build Modal */}
+            {isShareModalOpen && selectedBuildToShare && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => !isSharing && setIsShareModalOpen(false)}></div>
+                    <div className="glass-card w-full max-w-lg relative border border-white/10 shadow-2xl animate-scale-up overflow-hidden">
+                        <div className="flex items-center justify-between p-6 border-b border-white/10">
+                            <div>
+                                <h2 className="text-2xl font-black italic uppercase text-white">Share Build</h2>
+                                <p className="text-xs text-smoke mt-1">Post your build to the community feed.</p>
+                            </div>
+                            <button onClick={() => !isSharing && setIsShareModalOpen(false)} className="p-2 text-smoke hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                <XMarkIcon className="w-6 h-6" />
+                            </button>
+                        </div>
+
+                        <form onSubmit={handleShareSubmit} className="p-6 space-y-4">
+                            {/* Build Preview */}
+                            <div className="bg-black/40 border border-white/5 rounded-xl p-4 mb-4">
+                                <h4 className="text-dbd-red font-black text-sm uppercase italic mb-2">{selectedBuildToShare.buildName}</h4>
+                                <div className="flex items-center gap-2">
+                                    {selectedBuildToShare.perks.map((p, i) => (
+                                        <img key={i} src={p.icon} alt={p.name} className="w-8 h-8 rounded bg-obsidian border border-white/10 object-cover" />
+                                    ))}
+                                    <span className="text-xs font-bold text-white ml-2">Strength: {selectedBuildToShare.strength}%</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-widest text-smoke mb-2">Post Description</label>
+                                <textarea
+                                    rows={3}
+                                    maxLength={200}
+                                    value={shareText}
+                                    onChange={(e) => setShareText(e.target.value)}
+                                    className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-dbd-red transition-colors resize-none"
+                                    placeholder="Say something about this build..."
+                                    required
+                                />
+                                <div className="text-right text-[10px] text-smoke mt-1">{shareText.length} / 200</div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setIsShareModalOpen(false)} disabled={isSharing} className="px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-smoke hover:text-white transition-all disabled:opacity-50">Cancel</button>
+                                <button
+                                    type="submit"
+                                    disabled={isSharing || !shareText.trim()}
+                                    className="px-6 py-2.5 bg-dbd-red text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-dbd-red/80 transition-all disabled:opacity-50 min-w-[120px] shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    {isSharing ? <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin mx-auto"></div> : <><ShareIcon className="w-4 h-4" /> Share to Feed</>}
                                 </button>
                             </div>
                         </form>

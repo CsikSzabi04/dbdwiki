@@ -1,8 +1,11 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
 import { usePerks } from '../hooks/usePerks';
-import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon, ArrowLeftIcon, BookmarkIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { calculatePerkStrength, getMatchingBuilds } from '../hooks/allslot';
+import { useAuth } from '../hooks/useAuth';
+import { saveUserBuild } from '../firebase/users';
+import { toast } from 'react-hot-toast';
 
 // Perk kártya komponens
 const PerkCard = ({ perk, onClick, onInfoClick, activeTab }) => {
@@ -375,6 +378,15 @@ const WikiPage = () => {
     const [strength, setStrength] = useState(0);
     const [matchingBuilds, setMatchingBuilds] = useState([]);
 
+    // Build saving state
+    const { user } = useAuth();
+    const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
+    const [buildName, setBuildName] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Check if loudout is fully loaded (4 perks)
+    const isLoadoutFull = loadout.every(perk => perk !== null);
+
     const accentColor = activeTab === 'killer' ? 'dbd-red' : 'blue-500';
 
     useEffect(() => {
@@ -424,6 +436,43 @@ const WikiPage = () => {
         setLoadout(newLoadout);
         setStrength(calculateStrength(newLoadout));
         setMatchingBuilds(getMatchingBuilds(newLoadout, activeTab));
+    };
+
+    const handleSaveBuild = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            toast.error('You need to be logged in to save builds.');
+            return;
+        }
+
+        if (!buildName.trim()) {
+            toast.error('Please enter a name for your build.');
+            return;
+        }
+
+        setIsSaving(true);
+        try {
+            const buildData = {
+                buildName: buildName.trim(),
+                role: activeTab,
+                strength,
+                perks: loadout.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    icon: p.icon
+                }))
+            };
+
+            await saveUserBuild(user.uid, buildData);
+            toast.success('Build saved successfully!');
+            setIsSaveModalOpen(false);
+            setBuildName('');
+        } catch (error) {
+            console.error('Error saving build:', error);
+            toast.error('Failed to save build.');
+        } finally {
+            setIsSaving(false);
+        }
     };
 
     const filteredByRole = useMemo(() => {
@@ -578,8 +627,21 @@ const WikiPage = () => {
                                         />
                                     ))}
                                 </div>
-                                <div className="lg:col-span-1">
+                                <div className="lg:col-span-1 flex flex-col gap-3">
                                     <StrengthMeter percentage={strength} activeTab={activeTab} />
+
+                                    {/* Action Buttons below Strength Meter */}
+                                    <button
+                                        onClick={() => user ? setIsSaveModalOpen(true) : toast.error('You need to be logged in to save builds.')}
+                                        disabled={!isLoadoutFull}
+                                        className={`w-full py-3 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all ${isLoadoutFull
+                                                ? `bg-${accentColor} text-white hover:bg-${accentColor}/80 shadow-lg`
+                                                : 'bg-black/40 border border-white/10 text-smoke opacity-50 cursor-not-allowed'
+                                            }`}
+                                    >
+                                        <BookmarkIcon className="w-4 h-4" />
+                                        Save Build
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -605,6 +667,63 @@ const WikiPage = () => {
                     </div>
                 )}
             </div>
+
+            {/* Save Build Modal */}
+            {isSaveModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => !isSaving && setIsSaveModalOpen(false)}></div>
+                    <div className="glass-card w-full max-w-md relative border border-white/10 shadow-2xl animate-scale-up overflow-hidden">
+                        <div className="flex items-center justify-between p-6 border-b border-white/10">
+                            <div>
+                                <h2 className="text-2xl font-black italic uppercase text-white">Save Build</h2>
+                                <p className="text-xs text-smoke mt-1">Name your loadout to save it to your profile.</p>
+                            </div>
+                            <button onClick={() => !isSaving && setIsSaveModalOpen(false)} className="p-2 text-smoke hover:text-white hover:bg-white/5 rounded-xl transition-colors">
+                                <XMarkIcon className="w-6 h-6" />
+                            </button>
+                        </div>
+                        <form onSubmit={handleSaveBuild} className="p-6 space-y-4">
+                            <div>
+                                <label className="block text-[10px] font-bold uppercase tracking-widest text-smoke mb-2">Build Name</label>
+                                <input
+                                    type="text"
+                                    maxLength={30}
+                                    value={buildName}
+                                    onChange={(e) => setBuildName(e.target.value)}
+                                    className={`w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-${accentColor} transition-colors`}
+                                    placeholder={`E.g. "My Epic ${activeTab === 'killer' ? 'Killer' : 'Survivor'} Build"`}
+                                    required
+                                    autoFocus
+                                />
+                                <div className="text-right text-[10px] text-smoke mt-1">{buildName.length} / 30</div>
+                            </div>
+
+                            <div className="bg-black/40 rounded-xl p-3 border border-white/5 flex items-center gap-3">
+                                <div className="flex -space-x-2">
+                                    {loadout.map((perk, i) => (
+                                        perk && <img key={i} src={perk.icon} alt="perk" className="w-8 h-8 rounded bg-obsidian border border-white/10" />
+                                    ))}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-bold text-white truncate">{strength}% Strength</p>
+                                    <p className={`text-[10px] uppercase text-${accentColor}`}>{activeTab}</p>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setIsSaveModalOpen(false)} disabled={isSaving} className="px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-smoke hover:text-white transition-all disabled:opacity-50">Cancel</button>
+                                <button
+                                    type="submit"
+                                    disabled={isSaving || !buildName.trim()}
+                                    className={`px-6 py-2.5 bg-${accentColor} text-white text-xs font-bold uppercase tracking-widest rounded-xl hover:bg-${accentColor}/80 transition-all disabled:opacity-50 min-w-[120px]`}
+                                >
+                                    {isSaving ? <div className="w-4 h-4 border-2 border-white rounded-full border-t-transparent animate-spin mx-auto"></div> : "Save Build"}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </Layout>
     );
 };

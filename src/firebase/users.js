@@ -6,7 +6,9 @@ import {
   collection,
   query,
   where,
-  getDocs
+  getDocs,
+  addDoc,
+  orderBy
 } from 'firebase/firestore'
 
 export const createUserProfile = async (userId, userData) => {
@@ -77,4 +79,32 @@ export const getUserByUsername = async (username) => {
   } else {
     return null
   }
+}
+
+export const saveUserBuild = async (userId, buildData) => {
+  const buildsRef = collection(db, 'savedBuilds')
+  const newBuild = {
+    ...buildData,
+    userId,
+    createdAt: new Date().toISOString()
+  }
+  const docRef = await addDoc(buildsRef, newBuild)
+  return { id: docRef.id, ...newBuild }
+}
+
+export const getUserBuilds = async (userId) => {
+  const buildsRef = collection(db, 'savedBuilds')
+  const q = query(
+    buildsRef,
+    where('userId', '==', userId)
+  )
+
+  const querySnapshot = await getDocs(q)
+  const builds = []
+  querySnapshot.forEach((doc) => {
+    builds.push({ id: doc.id, ...doc.data() })
+  })
+
+  // Sort by createdAt descending (newest first)
+  return builds.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
 }

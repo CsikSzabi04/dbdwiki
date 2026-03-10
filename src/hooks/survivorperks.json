@@ -1050,7 +1050,8 @@
         "survivorCode": "sableward",
         "survivorName": "Sable Ward",
         "description": "You have a... particular interest in the macabre. When you are in the Basement, you see the Auras of all Survivors. When you unhook another Survivor in the Basement, they suffer from the Broken Status Effect for 20/25/30 seconds, but you both see the Killer's Aura for 6 seconds. Additionally, you suffer no penalty from the Incapacitated Status Effect while in the Basement.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_wicked.png?813308"   },
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_wicked.png?813308"
+    },
     {
         "id": 117,
         "name": "Invocation: Weaving Spiders",
@@ -1103,7 +1104,7 @@
         "survivorCode": "trevorbelmont",
         "survivorName": "Trevor Belmont",
         "description": "You thrive in the face of darkness. Whenever you or a Survivor within 12 meters stuns the Killer, you both see the Killer's Aura for 3/4/5 seconds. If you are the one stunning the Killer, you gain the Endurance Status Effect for 6 seconds.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/2/22/IconPerks_Exultation.png/revision/latest?cb=20240806171416"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_Exultation.png?62d4c5"
     },
     {
         "id": 123,
@@ -1112,7 +1113,7 @@
         "survivorCode": "trevorbelmont",
         "survivorName": "Trevor Belmont",
         "description": "You know how to make an entrance. When you are put into the Dying State, you can press the Active Ability button to instantly recover to the Injured State and gain the Endurance Status Effect for 6/8/10 seconds. This consumes all your remaining luck. Moment of Glory can only be used once per Trial.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_momentofglory.png?38d700"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_MomentOfGlory.png?6294f9"
     },
     {
         "id": 124,
@@ -1148,35 +1149,35 @@
         "survivorCode": "dustinhenderson",
         "survivorName": "Dustin Henderson",
         "description": "You never give up, and your friends inspire you to keep fighting. After healing another Survivor for the equivalent of 1 Health State, Second Wind activates. The next time you are unhooked or unhook yourself, you are automatically healed 1 Health State after 20/22/24 seconds. While Second Wind is active, you suffer from the Broken Status Effect.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/9/97/IconPerks_secondWind.png/revision/latest?cb=20190903175238"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_secondWind.png?628298"
     },
-  {
-    "id": 128,
-    "name": "Extrasensory Perception",
-    "code": "extrasensoryperception",
-    "survivorCode": "elevenhopper",
-    "survivorName": "Eleven",
-    "description": "By slowing down and focusing, you can sense both ally and enemy. Crouch for 4 seconds to activate this perk. While active: You see the Auras of Survivors, the Killer, and a variety of objects. These are revealed in an expanding 44-meter radius. Revealed objects include Chests, Exit Gate, Generators, Hatch, Items, Pallets, Totems, and Windows. You gain the Elusive and Oblivious Status Effects. When you stop crouching, or after 11 seconds, all effects of this perk end and it enters a 60/50/40 seconds cooldown. 'What is friend?' — Eleven",
-    "icon": "https://deadbydaylight.wiki.gg/images/IconsPerks_ExtrasensoryPerception.png?2084c6"
-  },
-  {
-    "id": 129,
-    "name": "Teamwork: Soft-Spoken",
-    "code": "teamworksoftspoken",
-    "survivorCode": "elevenhopper",
-    "survivorName": "Eleven",
-    "description": "You look out for your friends, using your abilities to protect them. For each other Survivor repairing a Generator with you, the range at which the Generator's repair noise is heard is reduced by 15/20/25%. While repairing with at least 1 other Survivor, you repair 5% faster. 'I make my own rules.' — Eleven",
-    "icon": "https://deadbydaylight.wiki.gg/images/IconsPerks_TeamworkSoftSpoken.png?67d34c"
-  },
-  {
-    "id": 130,
-    "name": "We See You",
-    "code": "weseeyou",
-    "survivorCode": "elevenhopper",
-    "survivorName": "Eleven",
-    "description": "You've honed your powers and can turn the tables on those who try to find you. Gain 1 token when the Killer reveals your Aura. When you have 4 tokens, they are all consumed, and the Killer's aura is revealed to you and all other Survivors for 10/12.5/15%. This perk has a 10-second cooldown for gaining tokens. 'It is not me. It is you. You are the monster.' — Eleven",
-    "icon": "https://deadbydaylight.wiki.gg/images/IconsPerks_WeSeeYou.png?f6308b"
-  },
+    {
+        "id": 128,
+        "name": "Extrasensory Perception",
+        "code": "extrasensoryperception",
+        "survivorCode": "elevenhopper",
+        "survivorName": "Eleven",
+        "description": "By slowing down and focusing, you can sense both ally and enemy. Crouch for 4 seconds to activate this perk. While active: You see the Auras of Survivors, the Killer, and a variety of objects. These are revealed in an expanding 44-meter radius. Revealed objects include Chests, Exit Gate, Generators, Hatch, Items, Pallets, Totems, and Windows. You gain the Elusive and Oblivious Status Effects. When you stop crouching, or after 11 seconds, all effects of this perk end and it enters a 60/50/40 seconds cooldown. 'What is friend?' — Eleven",
+        "icon": "https://deadbydaylight.wiki.gg/images/IconsPerks_ExtrasensoryPerception.png?2084c6"
+    },
+    {
+        "id": 129,
+        "name": "Teamwork: Soft-Spoken",
+        "code": "teamworksoftspoken",
+        "survivorCode": "elevenhopper",
+        "survivorName": "Eleven",
+        "description": "You look out for your friends, using your abilities to protect them. For each other Survivor repairing a Generator with you, the range at which the Generator's repair noise is heard is reduced by 15/20/25%. While repairing with at least 1 other Survivor, you repair 5% faster. 'I make my own rules.' — Eleven",
+        "icon": "https://deadbydaylight.wiki.gg/images/IconsPerks_TeamworkSoftSpoken.png?67d34c"
+    },
+    {
+        "id": 130,
+        "name": "We See You",
+        "code": "weseeyou",
+        "survivorCode": "elevenhopper",
+        "survivorName": "Eleven",
+        "description": "You've honed your powers and can turn the tables on those who try to find you. Gain 1 token when the Killer reveals your Aura. When you have 4 tokens, they are all consumed, and the Killer's aura is revealed to you and all other Survivors for 10/12.5/15%. This perk has a 10-second cooldown for gaining tokens. 'It is not me. It is you. You are the monster.' — Eleven",
+        "icon": "https://deadbydaylight.wiki.gg/images/IconsPerks_WeSeeYou.png?f6308b"
+    },
     {
         "id": 146,
         "name": "Apocalyptic Ingenuity",
@@ -1238,7 +1239,7 @@
         "survivorCode": "aestriyazar",
         "survivorName": "Aestri Yazar",
         "description": "Your bardic magic creates a distraction. When standing still for 2 seconds, press the Active Ability button to create a perfect illusion of yourself that stands in place for 10 seconds. The illusion emits a Loud Noise Notification if the Killer approaches it. Mirrored Illusion has a cooldown of 60/50/40 seconds.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/9/97/IconPerks_mirroredIllusion.png/revision/latest?cb=20240514174203"
+        "icon": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZTJAjs1AExeed7A4RD5Pw-0xfOgRaEe1bbA&s"
     },
     {
         "id": 153,
@@ -1328,7 +1329,7 @@
         "survivorCode": "gabrielsoma",
         "survivorName": "Gabriel Soma",
         "description": "Your synthetic body was built to endure. While you are healing another Survivor, both of you gain the Endurance Status Effect. After being stunned by a Pallet, you recover 10/15/20% faster for 30 seconds. Made for This causes the Exhausted Status Effect for 40 seconds after the Endurance is triggered.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/c/c0/IconPerks_madeForThis.png/revision/latest?cb=20230524205724"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_madeForThis.png?9e3242"
     },
     {
         "id": 163,
@@ -1427,7 +1428,7 @@
         "survivorCode": "thalitalyra",
         "survivorName": "Thalita Lyra",
         "description": "You use obstacles to your advantage. After fast-vaulting a Window, your next vault within 5 seconds is 20/25/30% faster and does not alert the Killer. Cut Loose has a cooldown of 40/35/30 seconds.",
-        "icon": "https://static.wikia.nocookie.net/deadbydaylight_gamepedia_en/images/0/02/IconPerks_cutLoose.png/revision/latest/scale-to-width-down/256?cb=20230218135315"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_cutLoose.png?45851f"
     },
     {
         "id": 174,
@@ -1445,33 +1446,33 @@
         "survivorCode": "thalitalyra",
         "survivorName": "Thalita Lyra",
         "description": "Two are stronger than one. When you are within 8 meters of another Survivor, both of you gain a 3/4/5% Haste. When you perform a Co-operative action together, that action is 15% faster.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_teamworkpoweroftwo.png?38d700"
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_teamworkPowerOfTwo.png?5cdb75"
     },
     {
-        "id": 179,
-        "name": "Flip-Flop",
-        "code": "flipflop",
-        "survivorCode": "ashjwilliams",
-        "survivorName": "Ash J. Williams",
-        "description": "You have an uncanny ability to escape the inevitable. While in the Dying State, 50% of your Recovery progression is converted into Wiggling progression, up to a maximum of 40/45/50%, once you are picked up by the Killer.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_flip-Flop.png?a27724"
+        "id": 176,
+        "name": "Ghost Notes",
+        "code": "ghostnotes",
+        "survivorCode": "veeboonyasak",
+        "survivorName": "Vee Boonyasak",
+        "description": "While suffering from the Exhausted Status Effect, you benefit from the following effects:\nCauses your Scratch Marks to disappear +50 % faster.\nIncreases your Recovery rate from that Status Effect by 5/7.5/10 %.\nGhost Notes does not cause the Exhausted Status Effect.\n\"Let's take it to the bridge!\" — Vee Boonyasak",
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_GhostNotes.png?92b28f"
     },
     {
-        "id": 180,
-        "name": "Buckle Up",
-        "code": "buckleup",
-        "survivorCode": "ashjwilliams",
-        "survivorName": "Ash J. Williams",
-        "description": "Unlocks potential in your Aura-reading ability. You can determine the Recovery progress of dying Survivors by the intensity of their Aura at a distance of 48 meters away. When healing another Survivor from the Dying State to the Injured State, the Killer's Aura is revealed to the both of you for 6/8/10 seconds.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_buckleUp.png?5ce8dd"
+        "id": 177,
+        "name": "One-Two-Three-Four!",
+        "code": "onetwothreefour",
+        "survivorCode": "veeboonyasak",
+        "survivorName": "Vee Boonyasak",
+        "description": "While standing and idle, press the Active Ability button to start a Performance:\nLasts for up to 15 seconds.\nEmpowers Survivors within 16 metres of your location.\nTriggers continuous Skill Checks.\nAfter successfully completing the Performance, empowered Survivors performing Healing or Repairing actions benefit from the following effect for 90 seconds:\nIncreases the chances of triggering Skill Checks by +20 %.\nOne-Two-Three-Four! has a cool-down of 110/100/90 seconds after cancelling or completing the Performance.\n\"We are loud! We are heavy! WE ARE AXEKICK!\" — Vee Boonyasak",
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_OneTwoThreeFour.png?bc3808"
     },
     {
-        "id": 181,
-        "name": "Mettle of Man",
-        "code": "mettleofman",
-        "survivorCode": "ashjwilliams",
-        "survivorName": "Ash J. Williams",
-        "description": "Evil has a way of always finding you. After you earn 3 Protection Hit Score Events, Mettle of Man activates. Once activated, the next occasion that would put you into the Dying State from the Injured State is ignored. The next time you heal back to full health, your Aura will be revealed to the Killer when you are farther than 12/14/16 metres from the Killer. Mettle of Man will deactivate the next time you are put into the Dying State. Increases your chances of being the Obsession.",
-        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_mettleofman.png?38d700"
+        "id": 178,
+        "name": "Road Life",
+        "code": "roadlife",
+        "survivorCode": "veeboonyasak",
+        "survivorName": "Vee Boonyasak",
+        "description": "While injured and repairing a Generator, regular Skill Checks have the following effects:\nGain +1 Token for Great Repair Skill Checks.\nGain 0 Tokens for Good Repair Skill Checks.\nLose -1 Token for Failed Repair Skill Checks.\nOnce you accumulate 6/5/4 Tokens, consume all Tokens to benefit from the following effect:\nIncreases your Healing speed by +100 % until you stop healing.\nRoad Life deactivates after use and does not activate while suffering from the Broken Status Effect.\nRoad Life does not interact with special Skill Checks triggered by outside effects.\n\"Remind me to teach you how to patch your own pedals, Krit.\" — Vee Boonyasak",
+        "icon": "https://deadbydaylight.wiki.gg/images/IconPerks_RoadLife.png?e0ae39"
     }
 ]
