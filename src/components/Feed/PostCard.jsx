@@ -318,6 +318,40 @@ const PostCard = memo(({ post, isPriority = false }) => {
                     {isExpanded ? "Mutat kevesebbet" : "Mutat többet"}
                   </button>
                 )}
+
+                {/* Build Data Preview - ÚJ */}
+                {post.buildData && (
+                  <div className="mt-4 glass-card border border-white/10 p-4 bg-gradient-to-br from-obsidian-light/50 to-obsidian/80">
+                    <div className="flex items-center justify-between mb-3 border-b border-white/5 pb-2">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-1 h-3 rounded-full ${post.buildData.role === 'killer' ? 'bg-dbd-red' : 'bg-blue-500'}`}></div>
+                        <h4 className="text-sm font-black uppercase italic text-white tracking-tighter">{post.buildData.buildName}</h4>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-smoke uppercase tracking-widest leading-none">Strength</span>
+                        <span className={`text-xs font-black ${post.buildData.role === 'killer' ? 'text-dbd-red' : 'text-blue-500'}`}>{post.buildData.strength}%</span>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-4 gap-2">
+                      {post.buildData.perks && post.buildData.perks.map((perk, i) => (
+                        <div key={i} className="group/perk relative flex flex-col items-center">
+                          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-black/40 border border-white/10 rounded-lg p-1 relative overflow-hidden group-hover/perk:border-dbd-red/50 transition-colors shadow-lg">
+                            <img
+                              src={perk.icon}
+                              alt={perk.name}
+                              className="w-full h-full object-cover rounded-sm group-hover/perk:scale-110 transition-transform duration-300"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover/perk:opacity-100 transition-opacity"></div>
+                          </div>
+                          <span className="mt-1 text-[8px] sm:text-[9px] font-bold text-smoke group-hover/perk:text-white transition-colors text-center truncate w-full uppercase tracking-tighter">
+                            {perk.name}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

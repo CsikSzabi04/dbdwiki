@@ -18,5 +18,10 @@ export default defineConfig({
         rewrite: (path) => path.replace(/^\/api-tricky/, ''),
       }
     }
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.js'],
+    globals: true
   }
 })

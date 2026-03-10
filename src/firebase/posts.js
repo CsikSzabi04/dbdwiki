@@ -16,6 +16,7 @@ import {
   where,
   limit
 } from 'firebase/firestore';
+import { sanitizeInput } from '../utils/sanitize';
 
 // References
 const postsRef = collection(db, 'posts');
@@ -58,8 +59,11 @@ const getLatestAuthorData = async (authorId) => {
  */
 export const createPost = async (postData) => {
   try {
+    const safeContent = sanitizeInput(postData.content);
+
     const docRef = await addDoc(postsRef, {
       ...postData,
+      content: safeContent,
       createdAt: serverTimestamp(),
       likes: 0,
       likedBy: [],
@@ -191,9 +195,12 @@ export const toggleLikePost = async (postId, userId, isCurrentlyLiked) => {
  */
 export const addComment = async (postId, commentData) => {
   try {
+    const safeText = sanitizeInput(commentData.text);
     const commentsRef = collection(db, 'posts', postId, 'comments');
+
     await addDoc(commentsRef, {
       ...commentData,
+      text: safeText,
       createdAt: serverTimestamp()
     });
 
@@ -276,9 +283,11 @@ export const deletePost = async (postId) => {
  */
 export const updatePost = async (postId, newContent) => {
   try {
+    const safeContent = sanitizeInput(newContent);
     const postRef = doc(db, 'posts', postId);
+
     await updateDoc(postRef, {
-      content: newContent,
+      content: safeContent,
       updatedAt: serverTimestamp(),
       isEdited: true
     });

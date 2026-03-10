@@ -6,6 +6,7 @@ import { calculatePerkStrength, getMatchingBuilds } from '../hooks/allslot';
 import { useAuth } from '../hooks/useAuth';
 import { saveUserBuild } from '../firebase/users';
 import { toast } from 'react-hot-toast';
+import StrengthMeter from '../components/Wiki/StrengthMeter';
 
 // Perk kártya komponens
 const PerkCard = ({ perk, onClick, onInfoClick, activeTab }) => {
@@ -125,47 +126,7 @@ const PerkSlot = ({ perk, onClick, isFilled, activeTab }) => {
     );
 };
 
-// Erősségmérő komponens
-const StrengthMeter = ({ percentage, activeTab }) => {
-    const safePercentage = Math.min(100, Math.max(0, percentage));
-    const accentColor = activeTab === 'killer' ? 'dbd-red' : 'blue-500';
 
-    const getColor = () => {
-        if (safePercentage < 30) return 'from-red-500 to-red-600';
-        if (safePercentage < 60) return 'from-yellow-500 to-yellow-600';
-        if (safePercentage < 80) return 'from-green-500 to-green-600';
-        return `from-${accentColor} to-${accentColor}/80`;
-    };
-
-    const getCategory = () => {
-        if (safePercentage <= 25) return 'Weak';
-        if (safePercentage <= 50) return 'Balanced';
-        if (safePercentage <= 75) return 'Good';
-        if (safePercentage <= 85) return 'Strong';
-        return 'Best';
-    };
-
-    return (
-        <div className="bg-obsidian-light rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
-                <span className="text-white font-black text-lg">
-                    {Math.round(safePercentage)}%
-                </span>
-            </div>
-            <div className="h-3 bg-black/40 rounded-full overflow-hidden border border-white/5">
-                <div
-                    className={`h-full bg-gradient-to-r ${getColor()} transition-all duration-500 ease-out rounded-full`}
-                    style={{ width: `${safePercentage}%` }}
-                />
-            </div>
-            <div className="mt-3 text-center">
-                <span className={`text-${accentColor} font-bold uppercase tracking-wider text-sm`}>
-                    {getCategory()}
-                </span>
-            </div>
-        </div>
-    );
-};
 
 // Matching Builds komponens
 const MatchingBuildsList = ({ builds, perkName, activeTab }) => {
@@ -635,8 +596,8 @@ const WikiPage = () => {
                                         onClick={() => user ? setIsSaveModalOpen(true) : toast.error('You need to be logged in to save builds.')}
                                         disabled={!isLoadoutFull}
                                         className={`w-full py-3 rounded-xl font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 transition-all ${isLoadoutFull
-                                                ? `bg-${accentColor} text-white hover:bg-${accentColor}/80 shadow-lg`
-                                                : 'bg-black/40 border border-white/10 text-smoke opacity-50 cursor-not-allowed'
+                                            ? `bg-${accentColor} text-white hover:bg-${accentColor}/80 shadow-lg`
+                                            : 'bg-black/40 border border-white/10 text-smoke opacity-50 cursor-not-allowed'
                                             }`}
                                     >
                                         <BookmarkIcon className="w-4 h-4" />

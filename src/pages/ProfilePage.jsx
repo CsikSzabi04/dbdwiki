@@ -180,7 +180,7 @@ const ProfilePage = () => {
                 content: fullPostContent,
                 authorId: user.uid,
                 authorName: displayName,
-                authorPhoto: userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`,
+                authorAvatar: userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`,
                 likes: [],
                 comments: [],
                 buildData: selectedBuildToShare // store it cleanly if Feed wants to render rich build card later
@@ -273,10 +273,7 @@ const ProfilePage = () => {
                         </div>
                         <p className="text-white/90 text-sm sm:text-base leading-relaxed italic">"{bio}"</p>
                         <div className="flex items-center gap-4 mt-4 text-[10px] text-smoke font-bold uppercase tracking-widest">
-                            <div className="flex items-center gap-1.5">
-                                <CalendarDaysIcon className="w-3.5 h-3.5" />
-                                Joined {joinDate}
-                            </div>
+
                         </div>
                     </div>
                 </div>

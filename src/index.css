@@ -65,6 +65,22 @@
   .nav-link.active {
     @apply bg-dbd-red/10 text-dbd-red border-r-4 border-dbd-red rounded-r-none;
   }
+
+  .animate-scaleUp {
+    animation: scaleUp 0.3s ease-out forwards;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* Custom scrollbar */

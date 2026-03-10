@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import CommunityLegends from './CommunityLegends';
@@ -9,6 +9,7 @@ import {
     BeakerIcon,
     UserIcon
 } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const bottomNavItems = [
     { name: 'Home', icon: HomeIcon, path: '/' },
@@ -19,6 +20,14 @@ const bottomNavItems = [
 ];
 
 const Layout = ({ children }) => {
+    const [isQrExpanded, setIsQrExpanded] = useState(false);
+
+    useEffect(() => {
+        const handleOpenQr = () => setIsQrExpanded(true);
+        window.addEventListener('open-qr-modal', handleOpenQr);
+        return () => window.removeEventListener('open-qr-modal', handleOpenQr);
+    }, []);
+
     return (
         <div className="min-h-screen bg-obsidian flex justify-center">
             <div className="w-full max-w-[1700px] flex">
@@ -60,6 +69,44 @@ const Layout = ({ children }) => {
                     ))}
                 </div>
             </nav>
+
+            {/* Global Expanded QR Code Modal */}
+            {isQrExpanded && (
+                <div
+                    className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
+                    onClick={() => setIsQrExpanded(false)}
+                >
+                    <div
+                        className="relative max-w-sm w-full bg-obsidian-light rounded-xl border border-white/10 p-6 flex flex-col items-center gap-4 animate-scaleUp"
+                        onClick={(e) => e.stopPropagation()} // Prevent click from closing when clicking inside
+                    >
+                        <button
+                            onClick={() => setIsQrExpanded(false)}
+                            className="absolute top-4 right-4 text-smoke hover:text-dbd-red transition-colors"
+                        >
+                            <XMarkIcon className="w-6 h-6" />
+                        </button>
+
+                        <div className="flex items-center gap-2 w-full justify-center">
+                            <h3 className="text-xl font-black uppercase italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-yellow-500">
+                                @dbdcommunity_hub
+                            </h3>
+                        </div>
+
+                        <div className="relative w-full aspect-square max-w-[280px] mx-auto bg-white rounded-xl p-4 flex items-center justify-center shadow-[0_0_30px_rgba(236,72,153,0.3)]">
+                            <img
+                                src="/qrcode.png"
+                                alt="Instagram QR Code Enlarged"
+                                className="w-full h-full object-contain"
+                            />
+                        </div>
+
+                        <p className="text-center text-smoke text-sm">
+                            Scan this QR code with your phone's camera to join our Instagram community!
+                        </p>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

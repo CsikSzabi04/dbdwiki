@@ -45,9 +45,19 @@ export const getUserProfile = async (userId) => {
   }
 }
 
+import { sanitizeInput } from '../utils/sanitize'
+
 export const updateUserProfile = async (userId, updates) => {
+  // Sanitize any string inputs (like bio, displayName) before saving to the database
+  const sanitizedUpdates = { ...updates }
+  for (const key in sanitizedUpdates) {
+    if (typeof sanitizedUpdates[key] === 'string') {
+      sanitizedUpdates[key] = sanitizeInput(sanitizedUpdates[key])
+    }
+  }
+
   const userRef = doc(db, 'users', userId)
-  await setDoc(userRef, updates, { merge: true })
+  await setDoc(userRef, sanitizedUpdates, { merge: true })
 }
 
 export const updateUserAvatar = async (userId, photoURL, email = null) => {
@@ -85,6 +95,7 @@ export const saveUserBuild = async (userId, buildData) => {
   const buildsRef = collection(db, 'savedBuilds')
   const newBuild = {
     ...buildData,
+    buildName: sanitizeInput(buildData.buildName), // Sanitize the build name
     userId,
     createdAt: new Date().toISOString()
   }
