@@ -14,6 +14,7 @@ import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid';
 import { useAuth } from '../../hooks/useAuth';
 import { toggleLikePost, addComment, subscribeToComments, deletePost, updatePost } from '../../firebase/posts';
 import { toast } from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 const ADMIN_UID = 'm5bQpvVyXrhtTSvdmOA4rbeDsFb2';
 
@@ -223,7 +224,16 @@ const PostCard = memo(({ post, isPriority = false }) => {
             {/* Header */}
             <div className="flex items-center justify-between mb-1">
               <div className="flex items-center gap-1 flex-wrap min-w-0">
-                <span className="font-bold text-white hover:underline text-sm sm:text-base truncate cursor-pointer">{post.authorName}</span>
+                {post.authorId && !post.authorId.startsWith('guest_') && post.authorId !== 'anonymous' ? (
+                  <Link
+                    to={`/user/${post.authorId}`}
+                    className="font-bold text-white hover:underline hover:text-dbd-red text-sm sm:text-base truncate cursor-pointer transition-colors"
+                  >
+                    {post.authorName}
+                  </Link>
+                ) : (
+                  <span className="font-bold text-white text-sm sm:text-base truncate">{post.authorName}</span>
+                )}
                 {post.authorName === 'bot@gmail.com' && <span className="text-[10px] bg-dbd-red/20 text-dbd-red px-1.5 py-0.5 rounded font-black tracking-tighter uppercase mr-1">BOT</span>}
                 {post.isVerified && <CheckBadgeIcon className="w-4 h-4 text-dbd-red shrink-0" />}
                 <span className="text-smoke text-xs sm:text-sm truncate">@{post.authorName?.toLowerCase().replace(/\s+/g, '').replace('@', '_')}</span>

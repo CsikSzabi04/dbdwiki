@@ -15,6 +15,7 @@ const BuildOn = lazy(() => import('./pages/BuildOn'))
 const AvailableOnPage = lazy(() => import('./pages/AvailableOnPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const NewsPage = lazy(() => import('./pages/NewsPage'))
+const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
 
 const PageFallback = () => (
   <div className="flex items-center justify-center py-32">
@@ -46,6 +47,7 @@ function App() {
               <Route path="/wiki" element={<WikiPage />} />
               <Route path="/news" element={<NewsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="/user/:userId" element={<UserProfilePage />} />
               <Route path="/builds" element={<BuildOn />} />
               <Route path="/available-on" element={<AvailableOnPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
