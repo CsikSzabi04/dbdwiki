@@ -80,8 +80,8 @@ export const createPost = async (postData) => {
  * Subscribes to real-time updates for posts.
  */
 export const subscribeToPosts = (callback) => {
-  // Limit to 15 posts for massive LCP improvement
-  const q = query(postsRef, orderBy('createdAt', 'desc'), limit(15));
+  // Limit to 8 posts for fastest LCP - fewer base64 strings for React to process
+  const q = query(postsRef, orderBy('createdAt', 'desc'), limit(8));
 
   return onSnapshot(q, async (snapshot) => {
     // Phase 1: Immediate callback with raw data for instant render

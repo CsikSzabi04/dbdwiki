@@ -1,24 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const StreamEmbed = ({ channelName = 'otzdarva' }) => {
-    // We use the official Twitch embed iframe.
-    // When the streamer is live, this shows their stream.
-    // When offline, it automatically shows their offline screen or latest VOD.
+    const [isLoaded, setIsLoaded] = useState(false);
+
     return (
         <div className="w-full relative bg-obsidian-light rounded-xl overflow-hidden shadow-lg border border-white/10 group">
             {/* Thematic Glow */}
             <div className="absolute inset-0 bg-dbd-red/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-            <div className="aspect-w-16 aspect-h-9 w-full relative z-10">
-                <iframe
-                    src={`https://player.twitch.tv/?channel=${channelName}&parent=${window.location.hostname}&muted=true`}
-                    frameBorder="0"
-                    allowFullScreen={true}
-                    scrolling="no"
-                    height="100%"
-                    width="100%"
-                    className="absolute inset-0 w-full h-full object-cover"
-                ></iframe>
+            <div className="aspect-video w-full relative z-10">
+                {isLoaded ? (
+                    <iframe
+                        src={`https://player.twitch.tv/?channel=${channelName}&parent=${window.location.hostname}&muted=true&autoplay=true`}
+                        frameBorder="0"
+                        allowFullScreen={true}
+                        scrolling="no"
+                        className="absolute inset-0 w-full h-full"
+                        title={`${channelName} live stream`}
+                    ></iframe>
+                ) : (
+                    <div
+                        className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 cursor-pointer hover:bg-black/60 transition-colors"
+                        onClick={() => setIsLoaded(true)}
+                    >
+                        <div className="w-16 h-16 rounded-full bg-purple-600/30 border-2 border-purple-500/50 flex items-center justify-center hover:bg-purple-600/50 transition-colors">
+                            <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z" />
+                            </svg>
+                        </div>
+                        <p className="text-white text-sm font-bold uppercase tracking-widest">Watch {channelName}</p>
+                        <p className="text-smoke text-xs">Click to load stream</p>
+                    </div>
+                )}
             </div>
 
             <div className="p-3 bg-black/60 backdrop-blur-md flex items-center justify-between border-t border-white/5 relative z-10">

@@ -300,17 +300,7 @@ const CommunityLegends = () => {
                             {/* Streamer Info - Kompaktabb */}
                             <div className="flex items-center gap-2 p-2 bg-black/40 rounded-lg border border-white/5">
                                 <div className="w-8 h-8 rounded-full bg-purple-900/50 flex items-center justify-center border border-purple-500/30 shrink-0 overflow-hidden">
-                                    <img
-                                        loading="lazy"
-                                        src="https://static-cdn.jtvnw.net/jtv_user_pictures/otzdarva-profile_image-7c7a3a00da531549-300x300.png"
-                                        alt="Otzdarva"
-                                        className="w-full h-full object-cover"
-                                        onError={(e) => {
-                                            e.target.onerror = null;
-                                            e.target.style.display = 'none';
-                                            e.target.parentElement.innerHTML = '<span class="text-base font-black italic text-white">O</span>';
-                                        }}
-                                    />
+                                    <span className="text-base font-black italic text-white">O</span>
                                 </div>
                                 <div className="min-w-0 flex-1">
                                     <div className="flex items-center gap-1 flex-wrap">
@@ -367,17 +357,7 @@ const CommunityLegends = () => {
                                         className="flex items-center gap-1.5 p-1.5 bg-black/40 rounded-lg border border-white/5 hover:border-pink-500/30 transition-all group"
                                     >
                                         <div className="w-6 h-6 rounded-full bg-pink-900/30 flex items-center justify-center border border-pink-500/30 shrink-0 overflow-hidden">
-                                            <img
-                                                loading="lazy"
-                                                src={`https://img.tiktok.com/api/avatar/?username=${creator.username}`}
-                                                alt={creator.displayName}
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => {
-                                                    e.target.onerror = null;
-                                                    e.target.style.display = 'none';
-                                                    e.target.parentElement.innerHTML = `<span class="text-xs font-black italic text-white">${creator.displayName.charAt(0)}</span>`;
-                                                }}
-                                            />
+                                            <span className="text-xs font-black italic text-white">{creator.displayName.charAt(0)}</span>
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <p className="text-[10px] font-bold text-white truncate leading-tight">

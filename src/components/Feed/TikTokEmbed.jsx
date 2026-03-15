@@ -8,16 +8,7 @@ const TikTokEmbed = ({ creator }) => {
             {/* TikTok Header */}
             <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-pink-600/20 to-blue-600/20 border-b border-white/5">
                 <div className="w-10 h-10 rounded-full bg-pink-900/50 flex items-center justify-center border border-pink-500/30 overflow-hidden shrink-0">
-                    <img 
-                        src={`https://img.tiktok.com/api/avatar/?username=${creator.username}`}
-                        alt={creator.displayName}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.style.display = 'none';
-                            e.target.parentElement.innerHTML = `<span class="text-lg font-black italic text-white">${creator.displayName.charAt(0)}</span>`;
-                        }}
-                    />
+                    <span className="text-lg font-black italic text-white">{creator.displayName.charAt(0)}</span>
                 </div>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -71,7 +62,7 @@ const TikTokEmbed = ({ creator }) => {
                 <div className="flex items-center gap-2">
                     <span className="flex items-center gap-1 text-[8px] text-smoke">
                         <svg className="w-3 h-3 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z" />
                         </svg>
                         {creator.followers}
                     </span>
@@ -81,7 +72,7 @@ const TikTokEmbed = ({ creator }) => {
                 <div className="flex items-center gap-1">
                     <span className="flex items-center gap-1 text-[8px] text-pink-400">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                         </svg>
                         Verified
                     </span>

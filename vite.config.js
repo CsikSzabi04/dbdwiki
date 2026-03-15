@@ -5,6 +5,18 @@ import tailwind from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwind()],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core - separate chunk
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // Firebase - large dependency, separate chunk
+          'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+        }
+      }
+    }
+  },
   server: {
     proxy: {
       '/api-steam': {
@@ -25,3 +37,4 @@ export default defineConfig({
     globals: true
   }
 })
+

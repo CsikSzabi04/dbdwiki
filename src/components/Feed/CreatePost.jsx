@@ -4,11 +4,8 @@ import {
   XMarkIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../hooks/useAuth';
-import survivorsData from '../../hooks/survivors.json';
-import killersData from '../../hooks/killers.json';
 import { Link } from 'react-router-dom';
 
-const allCharacters = [...survivorsData, ...killersData].filter(c => c.imgs?.portrait);
 
 const compressImage = (base64Str, maxWidth = 1200, maxHeight = 1200) => {
   return new Promise((resolve) => {
@@ -47,11 +44,10 @@ const CreatePost = ({ onSubmit }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Pick a random avatar for guests that persists until they refresh or post
+  // Simple guest avatar - avoids importing massive JSON files in the critical bundle
   const guestAvatar = useMemo(() => {
     if (user) return null;
-    const randomChar = allCharacters[Math.floor(Math.random() * allCharacters.length)];
-    return randomChar.imgs.portrait;
+    return `https://api.dicebear.com/7.x/avataaars/svg?seed=guest${Math.floor(Math.random() * 100)}`;
   }, [user]);
 
   const handleImageUpload = (e) => {
@@ -140,6 +136,8 @@ const CreatePost = ({ onSubmit }) => {
         <div className="flex-1 space-y-3 sm:space-y-4 min-w-0">
           <div className="relative">
             <textarea
+              id="post-content"
+              name="post-content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Share your latest build or a legendary escape..."

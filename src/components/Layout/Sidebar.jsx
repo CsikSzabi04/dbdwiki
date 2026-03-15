@@ -39,16 +39,12 @@ const Sidebar = () => {
     return (
         <aside className="w-full h-screen flex flex-col">
             {/* Logo */}
-            <div className="p-4 lg:p-8">
-                <h1 className="text-xl lg:text-3xl font-black italic tracking-tighter text-white text-center lg:text-left">
-                    <span className="hidden lg:inline">DBD</span>
-                    <span className="lg:hidden">D</span>
-                    <span className="text-dbd-red">
-                        <span className="hidden lg:inline">HUB</span>
-                        <span className="lg:hidden">H</span>
-                    </span>
-                </h1>
-                <p className="hidden lg:block text-[10px] uppercase tracking-[0.3em] text-smoke mt-1 opacity-50">Community Console</p>
+            <div className="p-4 lg:p-6 flex items-center justify-center lg:justify-start">
+                <img
+                    src="/logo.png"
+                    alt="Dead by Daylight Community"
+                    className="h-15 w-15 lg:h-36 lg:w-36 object-cover rounded-[100%]"
+                />
             </div>
 
             {/* Navigation */}
@@ -87,16 +83,17 @@ const Sidebar = () => {
                         <img
                             src="https://images.steamusercontent.com/ugc/988989114488731806/4F7547A4CD93085C38217C96CEB0E879BE91C4F0/?imw=268&imh=268&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
                             alt="DBD Icon"
-                            className="w-10 h-10 object-contain"
+                            className=" lg:w-10 lg:h-10 w-16 h-16 object-contain"
                         />
-                        <span className="font-bold uppercase tracking-widest text-sm text-white group-hover:text-dbd-red transition-colors">
-                            Dead By Daylight
+                        <span className="hidden lg:block font-bold uppercase tracking-widest text-sm text-white group-hover:text-dbd-red transition-colors">
+                            Dead By <br /> Daylight
                         </span>
+
                     </div>
                     <img
                         src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/381210/header.jpg"
                         alt="Dead by Daylight"
-                        className="w-full rounded-lg border border-white/10 group-hover:border-dbd-red/50 transition-colors"
+                        className="hidden lg:block w-full rounded-lg border border-white/10 group-hover:border-dbd-red/50 transition-colors"
                     />
                 </a>
             </div>

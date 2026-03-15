@@ -14,12 +14,11 @@ import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid';
 import { useAuth } from '../../hooks/useAuth';
 import { toggleLikePost, addComment, subscribeToComments, deletePost, updatePost } from '../../firebase/posts';
 import { toast } from 'react-hot-toast';
-import survivorsData from '../../hooks/survivors.json';
-import killersData from '../../hooks/killers.json';
-
-const allCharacters = [...survivorsData, ...killersData].filter(c => c.imgs?.portrait);
 
 const ADMIN_UID = 'm5bQpvVyXrhtTSvdmOA4rbeDsFb2';
+
+// Simple guest avatar - avoids importing massive JSON files in the critical bundle
+const getGuestAvatar = () => `https://api.dicebear.com/7.x/avataaars/svg?seed=guest${Math.floor(Math.random() * 100)}`;
 
 const PostCard = memo(({ post, isPriority = false }) => {
   const { user, userProfile } = useAuth();
@@ -42,11 +41,8 @@ const PostCard = memo(({ post, isPriority = false }) => {
   const isAdmin = userProfile?.admin === true;
   const canManage = isOwner || isAdmin;
 
-  // Random avatar for guest comments
-  const guestCommentAvatar = useMemo(() => {
-    const randomChar = allCharacters[Math.floor(Math.random() * allCharacters.length)];
-    return randomChar.imgs.portrait;
-  }, []);
+  // Simple guest avatar - no JSON import needed
+  const guestCommentAvatar = useMemo(() => getGuestAvatar(), []);
 
   useEffect(() => {
     setLikesCount(post.likes || 0);
