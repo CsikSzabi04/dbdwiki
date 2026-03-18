@@ -10,7 +10,13 @@ import {
     CalendarDaysIcon,
     FireIcon,
     TrophyIcon,
+    UserPlusIcon,
+    UserMinusIcon
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../hooks/useAuth';
+import { getFollowStats, checkIfFollowing, toggleFollow } from '../firebase/follows';
+import { createNotification } from '../firebase/notifications';
+import { toast } from 'react-hot-toast';
 
 const getPrestigeLevel = (postCount) => {
     if (postCount < 10) return 1;
@@ -23,6 +29,7 @@ const getPrestigeLevel = (postCount) => {
 
 const UserProfilePage = () => {
     const { userId } = useParams();
+    const { user, userProfile } = useAuth();
     const [profile, setProfile] = useState(null);
     const [posts, setPosts] = useState([]);
     const [isProfileLoading, setIsProfileLoading] = useState(true);
@@ -30,18 +37,35 @@ const UserProfilePage = () => {
     const [activeTab, setActiveTab] = useState('Overview');
     const [notFound, setNotFound] = useState(false);
 
-    // Fetch the user's profile data
+    // Follows state
+    const [followers, setFollowers] = useState(0);
+    const [following, setFollowing] = useState(0);
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [isFollowLoading, setIsFollowLoading] = useState(false);
+
+    // Fetch the user's profile data and follow stats
     useEffect(() => {
         if (!userId) return;
         setIsProfileLoading(true);
-        getUserProfile(userId)
-            .then((data) => {
-                if (!data) setNotFound(true);
-                else setProfile(data);
-            })
-            .catch(() => setNotFound(true))
-            .finally(() => setIsProfileLoading(false));
-    }, [userId]);
+
+        Promise.all([
+            getUserProfile(userId),
+            getFollowStats(userId),
+            user ? checkIfFollowing(user.uid, userId) : Promise.resolve(false)
+        ]).then(([profileData, statsData, isFollowingData]) => {
+            if (!profileData) {
+                setNotFound(true);
+            } else {
+                setProfile(profileData);
+                setFollowers(statsData.followersCount);
+                setFollowing(statsData.followingCount);
+                setIsFollowing(isFollowingData);
+            }
+        }).catch((err) => {
+            console.error(err);
+            setNotFound(true);
+        }).finally(() => setIsProfileLoading(false));
+    }, [userId, user]);
 
     // Subscribe to this user's posts
     useEffect(() => {
@@ -92,6 +116,48 @@ const UserProfilePage = () => {
     const bio = profile?.bio || 'The fog is quiet...';
     const prestige = getPrestigeLevel(posts.length);
 
+    const handleFollowToggle = async () => {
+        if (!user) {
+            toast.error('You must sign in to follow players.');
+            return;
+        }
+        if (isFollowLoading) return;
+
+        setIsFollowLoading(true);
+        try {
+            const currentlyFollowing = isFollowing;
+
+            // Optimistic update
+            setIsFollowing(!currentlyFollowing);
+            setFollowers(prev => currentlyFollowing ? prev - 1 : prev + 1);
+
+            const nowFollowing = await toggleFollow(user.uid, userId);
+
+            // If they just followed (not unfollowed), send a notification
+            if (nowFollowing) {
+                const senderName = userProfile?.displayName || user.email?.split('@')[0];
+                const senderAvatar = userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`;
+                await createNotification({
+                    recipientId: userId,
+                    senderId: user.uid,
+                    senderName,
+                    senderAvatar,
+                    type: 'follow'
+                }).catch(err => console.error("Non-fatal: Failed to send follow notification", err));
+            }
+
+            toast.success(nowFollowing ? `Following ${displayName}` : `Unfollowed ${displayName}`);
+        } catch (error) {
+            console.error("Follow error:", error);
+            toast.error('Failed to change follow status.');
+            // Revert optimistic update
+            setIsFollowing(currentlyFollowing);
+            setFollowers(prev => currentlyFollowing ? prev + 1 : prev - 1);
+        } finally {
+            setIsFollowLoading(false);
+        }
+    };
+
     return (
         <Layout>
             <div className="max-w-[1200px] mx-auto p-3 sm:p-4 md:p-8 animate-fade-in relative">
@@ -132,17 +198,54 @@ const UserProfilePage = () => {
                         </div>
 
                         {/* Stats */}
-                        <div className="flex gap-3 sm:gap-4 justify-center md:justify-end flex-wrap">
+                        <div className="flex gap-2 sm:gap-4 justify-center md:justify-end flex-wrap mt-4 md:mt-0">
+                            <div className="flex flex-col items-center min-w-[60px] glass-card border border-white/10 rounded-xl px-3 py-2 cursor-pointer hover:bg-white/5 transition-colors">
+                                <span className="text-xl font-black text-white">{followers}</span>
+                                <span className="text-[10px] text-smoke uppercase tracking-widest">Followers</span>
+                            </div>
+                            <div className="flex flex-col items-center min-w-[60px] glass-card border border-white/10 rounded-xl px-3 py-2 cursor-pointer hover:bg-white/5 transition-colors">
+                                <span className="text-xl font-black text-white">{following}</span>
+                                <span className="text-[10px] text-smoke uppercase tracking-widest">Following</span>
+                            </div>
                             <div className="flex flex-col items-center min-w-[60px] glass-card border border-white/10 rounded-xl px-3 py-2">
                                 <span className="text-xl font-black text-white">{posts.length}</span>
                                 <span className="text-[10px] text-smoke uppercase tracking-widest">Posts</span>
                             </div>
-                            <div className="flex flex-col items-center min-w-[60px] glass-card border border-white/10 rounded-xl px-3 py-2">
+                            <div className="flex flex-col items-center min-w-[60px] glass-card border border-white/10 rounded-xl px-3 py-2 bg-gradient-to-t from-dbd-red/20 to-transparent">
                                 <span className="text-xl font-black text-dbd-red">{prestige}</span>
                                 <span className="text-[10px] text-smoke uppercase tracking-widest">Prestige</span>
                             </div>
                         </div>
                     </div>
+
+                    {/* Follow Action Button */}
+                    {user?.uid !== userId && (
+                        <div className="w-full mt-4 md:mt-0 md:absolute md:top-6 md:right-6 lg:right-10 flex justify-center md:justify-end">
+                            <button
+                                onClick={handleFollowToggle}
+                                disabled={isFollowLoading}
+                                className={`
+                                    flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest text-xs transition-all w-full sm:w-auto justify-center
+                                    ${isFollowing
+                                        ? 'bg-white/5 text-white border border-white/20 hover:bg-dbd-red/20 hover:text-dbd-red hover:border-dbd-red/40'
+                                        : 'bg-dbd-red text-white hover:bg-red-700 shadow-[0_0_15px_rgba(236,72,153,0.3)]'}
+                                    ${isFollowLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                                `}
+                            >
+                                {isFollowing ? (
+                                    <>
+                                        <UserMinusIcon className="w-4 h-4" />
+                                        Unfollow
+                                    </>
+                                ) : (
+                                    <>
+                                        <UserPlusIcon className="w-4 h-4" />
+                                        Follow
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
                 </div>
 
                 {/* Info Bar */}

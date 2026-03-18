@@ -58,10 +58,16 @@ const Navbar = () => {
               >
                 News
               </Link>
+              <Link
+                to="/explore"
+                className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                Explore
+              </Link>
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {currentUser ? (
               <>
                 <Link

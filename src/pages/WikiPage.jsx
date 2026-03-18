@@ -1,18 +1,32 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
 import { useCharacters } from '../hooks/useCharacters';
 import CharacterCard from '../components/Wiki/CharacterCard';
 import CharacterProfile from '../components/Wiki/CharacterProfile';
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const difficultyOrder = { 'Easy': 1, 'Intermediate': 2, 'Moderate': 2, 'Hard': 3, 'Very Hard': 4 };
 
 const WikiPage = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const { characters, loading, error } = useCharacters();
-    const [activeTab, setActiveTab] = useState('survivor');
+    const [activeTab, setActiveTab] = useState(location.state?.role || 'survivor');
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); // name-asc, name-desc, diff-asc, diff-desc
     const [selectedCharacter, setSelectedCharacter] = useState(null); // New state for profile view
+
+    useEffect(() => {
+        if (!loading && characters.length > 0 && location.state?.characterName) {
+            const char = characters.find(c => c.name.toLowerCase() === location.state.characterName.toLowerCase());
+            if (char) {
+                setActiveTab(char.role);
+                setSelectedCharacter(char);
+                navigate(location.pathname, { replace: true, state: {} });
+            }
+        }
+    }, [loading, characters, location.state, navigate]);
 
     const filteredCharacters = useMemo(() => {
         let result = characters.filter(char => {

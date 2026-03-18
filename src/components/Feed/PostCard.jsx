@@ -7,12 +7,13 @@ import {
   PaperAirplaneIcon,
   PencilSquareIcon,
   TrashIcon,
-  XMarkIcon
+  XMarkIcon,
+  MapPinIcon
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartOutline } from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolid } from '@heroicons/react/24/solid';
+import { HeartIcon as HeartSolid, MapPinIcon as MapPinSolid } from '@heroicons/react/24/solid';
 import { useAuth } from '../../hooks/useAuth';
-import { toggleLikePost, addComment, subscribeToComments, deletePost, updatePost } from '../../firebase/posts';
+import { toggleLikePost, addComment, subscribeToComments, deletePost, updatePost, togglePinPost } from '../../firebase/posts';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 
@@ -111,7 +112,7 @@ const PostCard = memo(({ post, isPriority = false }) => {
     setLikesCount(prev => currentlyLiked ? prev - 1 : prev + 1);
 
     try {
-      await toggleLikePost(post.id, user.uid, currentlyLiked);
+      await toggleLikePost(post, user, userProfile, currentlyLiked);
     } catch (error) {
       console.error("DEBUG - Like failed. User:", user?.uid, "Error:", error);
       setIsLiked(currentlyLiked);
@@ -164,6 +165,16 @@ const PostCard = memo(({ post, isPriority = false }) => {
     }
   };
 
+  const handlePinToggle = async () => {
+    setShowMenu(false);
+    try {
+      await togglePinPost(post.id, post.isPinned);
+      toast.success(post.isPinned ? 'Post unpinned!' : 'Post pinned to top!');
+    } catch (error) {
+      toast.error('Failed to change pin status.');
+    }
+  };
+
   const submitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return;
@@ -173,7 +184,7 @@ const PostCard = memo(({ post, isPriority = false }) => {
       const authorName = user ? (userProfile?.displayName || user?.email?.split('@')[0] || 'Unknown Entity') : 'bot@gmail.com';
       const authorAvatar = user ? (userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`) : guestCommentAvatar;
 
-      await addComment(post.id, {
+      await addComment(post, {
         text: newComment.trim(),
         authorId: user?.uid || 'anonymous',
         authorName,
@@ -241,7 +252,12 @@ const PostCard = memo(({ post, isPriority = false }) => {
                   · {post.createdAt ? new Date(post.createdAt).toLocaleDateString() : 'Just now'}
                   {post.isEdited && <span className="ml-1 opacity-50 italic">(edited)</span>}
                 </span>
-              </div>
+                  {post.isPinned && (
+                    <span className="ml-2 flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-dbd-red bg-dbd-red/10 px-2 py-0.5 rounded-full border border-dbd-red/20 shrink-0">
+                      <MapPinSolid className="w-3 h-3" /> Pinned
+                    </span>
+                  )}
+                </div>
 
               {/* Management Menu */}
               <div className="relative" ref={menuRef}>
@@ -254,6 +270,15 @@ const PostCard = memo(({ post, isPriority = false }) => {
 
                 {showMenu && (
                   <div className="absolute right-0 mt-1 w-48 bg-obsidian border border-white/10 rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.8)] z-[110] overflow-hidden animate-in fade-in zoom-in duration-150 backdrop-blur-md">
+                    {isAdmin && (
+                      <button
+                        onClick={handlePinToggle}
+                        className={`w-full flex items-center gap-3 px-4 py-3 text-sm transition-colors ${post.isPinned ? 'text-dbd-red hover:bg-dbd-red/10' : 'text-white hover:bg-white/5'}`}
+                      >
+                        <MapPinIcon className="w-4 h-4" />
+                        {post.isPinned ? 'Unpin Post' : 'Pin to Top'}
+                      </button>
+                    )}
                     {canManage ? (
                       <>
                         <button

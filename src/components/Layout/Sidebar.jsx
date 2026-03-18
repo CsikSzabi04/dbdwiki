@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import {
     HomeIcon,
@@ -7,15 +7,28 @@ import {
     BeakerIcon,
     BookOpenIcon,
     GlobeAltIcon,
+    BellIcon,
     ArrowLeftOnRectangleIcon,
-    ArrowRightOnRectangleIcon
+    ArrowRightOnRectangleIcon,
+    MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
+import { subscribeToNotifications } from '../../firebase/notifications';
 
 const Sidebar = () => {
     const { user, userProfile, logout } = useAuth();
     const navigate = useNavigate();
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        if (!user?.uid) return;
+        const unsubscribe = subscribeToNotifications(user.uid, 50, (notifications) => {
+            const unread = notifications.filter(n => !n.read).length;
+            setUnreadCount(unread);
+        });
+        return () => unsubscribe();
+    }, [user?.uid]);
 
     const handleLogout = async () => {
         try {
@@ -29,6 +42,8 @@ const Sidebar = () => {
 
     const navItems = [
         { name: 'Home', icon: HomeIcon, path: '/' },
+        { name: 'Explore', icon: MagnifyingGlassIcon, path: '/explore' },
+        { name: 'Notifications', icon: BellIcon, path: '/notifications', private: true, badge: unreadCount },
         { name: 'News', icon: NewspaperIcon, path: '/news' },
         { name: 'Wiki', icon: BookOpenIcon, path: '/wiki' },
         { name: 'Builds', icon: BeakerIcon, path: '/builds' },
@@ -57,15 +72,22 @@ const Sidebar = () => {
                             key={item.name}
                             to={item.path}
                             className={({ isActive }) => `
-                                flex items-center justify-center lg:justify-start gap-4 px-3 lg:px-4 py-3 rounded-xl transition-all duration-300 group
+                                flex mb-0.5 items-center justify-center lg:justify-start gap-4 px-3 lg:px-4 py-3 rounded-xl transition-all duration-300 group relative
                                 ${isActive
                                     ? 'bg-dbd-red/10 text-dbd-red border border-dbd-red/20'
                                     : 'text-smoke hover:bg-white/5 hover:text-white border border-transparent'}
                             `}
                             title={item.name}
                         >
-                            <item.icon className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
-                            <span className="hidden lg:inline font-bold uppercase tracking-widest text-xs">{item.name}</span>
+                            <div className="relative">
+                                <item.icon className="w-5 h-5 shrink-0 group-hover:scale-110 transition-transform" />
+                                {item.badge > 0 && (
+                                    <span className="absolute -top-1.5 -right-1.5 bg-dbd-red text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-lg border border-obsidian">
+                                        {item.badge > 9 ? '9+' : item.badge}
+                                    </span>
+                                )}
+                            </div>
+                            <span className="hidden lg:inline font-bold uppercase tracking-widest text-xs flex-1">{item.name}</span>
                         </NavLink>
                     );
                 })}

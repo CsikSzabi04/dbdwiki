@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth';
 import { saveUserBuild } from '../firebase/users';
 import { toast } from 'react-hot-toast';
 import StrengthMeter from '../components/Wiki/StrengthMeter';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 // Perk kártya komponens
 const PerkCard = ({ perk, onClick, onInfoClick, activeTab }) => {
@@ -330,9 +331,11 @@ const PerkProfile = ({ perk, onBack, onAddToLoadout, matchingBuilds = [], active
 };
 
 const WikiPage = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const { perks, loading, error } = usePerks();
-    const [activeTab, setActiveTab] = useState('killer');
-    const [search, setSearch] = useState('');
+    const [activeTab, setActiveTab] = useState(location.state?.role || 'killer');
+    const [search, setSearch] = useState(location.state?.perkName || '');
     const [sortBy, setSortBy] = useState('name-asc');
     const [selectedPerk, setSelectedPerk] = useState(null);
     const [loadout, setLoadout] = useState([null, null, null, null]);
@@ -350,11 +353,36 @@ const WikiPage = () => {
 
     const accentColor = activeTab === 'killer' ? 'dbd-red' : 'blue-500';
 
+    const isFirstRender = React.useRef(true);
+
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         setLoadout([null, null, null, null]);
         setStrength(0);
         setMatchingBuilds([]);
     }, [activeTab]);
+
+    // Handle incoming loadout state from explore or other pages
+    useEffect(() => {
+        if (!loading && perks.length > 0 && location.state?.buildPerks) {
+            const newLoadout = [null, null, null, null];
+            location.state.buildPerks.forEach((bp, index) => {
+                if (index < 4) {
+                    const found = perks.find(p => p.id === bp.id || p.name === bp.name);
+                    if (found) newLoadout[index] = found;
+                }
+            });
+            setLoadout(newLoadout);
+            setStrength(calculatePerkStrength(newLoadout, activeTab));
+            setMatchingBuilds(getMatchingBuilds(newLoadout, activeTab));
+            
+            // clear state so manual tab switches afterwards work properly
+            navigate(location.pathname, { replace: true, state: {} });
+        }
+    }, [loading, perks, location.state, activeTab, navigate]);
 
     const calculateStrength = (currentLoadout) => {
         const rolePerksInLoadout = currentLoadout.filter(perk => perk?.role === activeTab);

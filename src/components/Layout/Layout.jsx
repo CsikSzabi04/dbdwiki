@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Sidebar from './Sidebar';
 import CommunityLegends from './CommunityLegends';
 import {
@@ -7,12 +8,14 @@ import {
     NewspaperIcon,
     BookOpenIcon,
     BeakerIcon,
-    UserIcon
+    UserIcon,
+    MagnifyingGlassIcon
 } from '@heroicons/react/24/outline';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const bottomNavItems = [
     { name: 'Home', icon: HomeIcon, path: '/' },
+    { name: 'Explore', icon: MagnifyingGlassIcon, path: '/explore' },
     { name: 'News', icon: NewspaperIcon, path: '/news' },
     { name: 'Wiki', icon: BookOpenIcon, path: '/wiki' },
     { name: 'Builds', icon: BeakerIcon, path: '/builds' },
@@ -29,7 +32,13 @@ const Layout = ({ children }) => {
     }, []);
 
     return (
-        <div className="min-h-screen bg-obsidian flex justify-center">
+        <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="min-h-screen bg-obsidian flex justify-center"
+        >
             <div className="w-full max-w-[1700px] flex">
 
                 {/* Left Sidebar — hidden on mobile, icon-only on md, full on lg */}
@@ -107,7 +116,7 @@ const Layout = ({ children }) => {
                     </div>
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 };
 

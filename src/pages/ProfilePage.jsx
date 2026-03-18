@@ -5,6 +5,7 @@ import PostCard from '../components/Feed/PostCard';
 import PostSkeleton from '../components/Feed/PostSkeleton';
 import { subscribeToUserPosts, createPost } from '../firebase/posts';
 import { getUserBuilds } from '../firebase/users';
+import { getFollowStats } from '../firebase/follows';
 import { Navigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -57,6 +58,10 @@ const ProfilePage = () => {
     const [savedBuilds, setSavedBuilds] = useState([]);
     const [isBuildsLoading, setIsBuildsLoading] = useState(true);
 
+    // Follows state
+    const [followers, setFollowers] = useState(0);
+    const [following, setFollowing] = useState(0);
+
     // Share Build Modal state
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [selectedBuildToShare, setSelectedBuildToShare] = useState(null);
@@ -70,6 +75,11 @@ const ProfilePage = () => {
         const unsubscribe = subscribeToUserPosts(user.uid, (posts) => {
             setMyPosts(posts);
             setIsPostsLoading(false);
+        });
+
+        getFollowStats(user.uid).then(stats => {
+            setFollowers(stats.followersCount);
+            setFollowing(stats.followingCount);
         });
 
         return () => unsubscribe();
@@ -117,6 +127,7 @@ const ProfilePage = () => {
         ? new Date(userProfile.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })
         : 'Unknown';
     const bio = userProfile?.bio || "The fog is quiet...";
+    const prestige = getPrestigeLevel(myPosts.length);
 
     const handleOpenEditProfile = () => {
         setEditForm({
@@ -278,8 +289,25 @@ const ProfilePage = () => {
                             <span className="text-dbd-red font-black uppercase tracking-widest text-xs">BIO</span>
                         </div>
                         <p className="text-white/90 text-sm sm:text-base leading-relaxed italic">"{bio}"</p>
-                        <div className="flex items-center gap-4 mt-4 text-[10px] text-smoke font-bold uppercase tracking-widest">
 
+                        {/* Stats integrated gracefully below the bio */}
+                        <div className="flex gap-4 sm:gap-6 justify-center md:justify-start flex-wrap mt-6 border-t border-white/5 pt-4">
+                            <div className="flex flex-col items-center min-w-[60px] cursor-pointer hover:bg-white/5 rounded-xl px-2 py-1 transition-colors">
+                                <span className="text-lg font-black text-white">{followers}</span>
+                                <span className="text-[10px] text-smoke uppercase tracking-widest">Followers</span>
+                            </div>
+                            <div className="flex flex-col items-center min-w-[60px] cursor-pointer hover:bg-white/5 rounded-xl px-2 py-1 transition-colors">
+                                <span className="text-lg font-black text-white">{following}</span>
+                                <span className="text-[10px] text-smoke uppercase tracking-widest">Following</span>
+                            </div>
+                            <div className="flex flex-col items-center min-w-[60px] px-2 py-1">
+                                <span className="text-lg font-black text-white">{myPosts.length}</span>
+                                <span className="text-[10px] text-smoke uppercase tracking-widest">Posts</span>
+                            </div>
+                            <div className="flex flex-col items-center min-w-[60px] border border-dbd-red/20 bg-dbd-red/5 rounded-xl px-2 py-1">
+                                <span className="text-lg font-black text-dbd-red">{prestige}</span>
+                                <span className="text-[10px] text-smoke uppercase tracking-widest">Prestige</span>
+                            </div>
                         </div>
                     </div>
                 </div>

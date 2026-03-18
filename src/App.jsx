@@ -1,7 +1,8 @@
 import React, { lazy, Suspense, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { AuthProvider } from './context/AuthContext'
+import { AnimatePresence } from 'framer-motion'
 
 // Critical path - eagerly loaded
 import HomePage from './pages/HomePage'
@@ -16,12 +17,37 @@ const AvailableOnPage = lazy(() => import('./pages/AvailableOnPage'))
 const ProfilePage = lazy(() => import('./pages/ProfilePage'))
 const NewsPage = lazy(() => import('./pages/NewsPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
+const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
+const ExplorePage = lazy(() => import('./pages/ExplorePage'))
 
 const PageFallback = () => (
   <div className="flex items-center justify-center py-32">
     <div className="w-10 h-10 border-4 border-dbd-red rounded-full border-t-transparent animate-spin"></div>
   </div>
 )
+
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/wiki" element={<WikiPage />} />
+        <Route path="/news" element={<NewsPage />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/user/:userId" element={<UserProfilePage />} />
+        <Route path="/builds" element={<BuildOn />} />
+        <Route path="/available-on" element={<AvailableOnPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AnimatePresence>
+  );
+};
 
 function App() {
   const [isStarting, setIsStarting] = useState(true)
@@ -40,18 +66,7 @@ function App() {
         <div className="min-h-screen bg-obsidian text-white">
           <Toaster position="bottom-right" />
           <Suspense fallback={<PageFallback />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/wiki" element={<WikiPage />} />
-              <Route path="/news" element={<NewsPage />} />
-              <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/user/:userId" element={<UserProfilePage />} />
-              <Route path="/builds" element={<BuildOn />} />
-              <Route path="/available-on" element={<AvailableOnPage />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+            <AnimatedRoutes />
           </Suspense>
         </div>
       </Router>
