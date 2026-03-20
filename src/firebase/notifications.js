@@ -27,7 +27,7 @@ import {
  */
 export const createNotification = async (data) => {
     // Prevent users from notifying themselves
-    if (data.recipientId === data.senderId) return null;
+    if (data.recipientId !== 'all' && data.recipientId === data.senderId) return null;
 
     try {
         const notificationsRef = collection(db, 'notifications');
@@ -45,6 +45,19 @@ export const createNotification = async (data) => {
 };
 
 /**
+ * Creates a global broadcast notification for all users.
+ */
+export const createBroadcastNotification = async (data) => {
+    return createNotification({
+        ...data,
+        recipientId: 'all',
+        senderId: 'system',
+        senderName: 'The Fog',
+        senderAvatar: '/logo.png'
+    });
+};
+
+/**
  * Subscribe to a user's notifications.
  */
 export const subscribeToNotifications = (userId, limitCount = 8, callback) => {
@@ -54,23 +67,59 @@ export const subscribeToNotifications = (userId, limitCount = 8, callback) => {
     }
 
     const notificationsRef = collection(db, 'notifications');
-    const q = query(
+    
+    // We'll use two separate listeners and combine them to avoid complex permission issues with 'in' queries
+    let privateNotifications = [];
+    let broadcastNotifications = [];
+
+    const updateCallback = () => {
+        const combined = [...privateNotifications, ...broadcastNotifications]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, limitCount);
+        callback(combined);
+    };
+
+    const qPrivate = query(
         notificationsRef,
         where('recipientId', '==', userId),
         orderBy('createdAt', 'desc'),
         limit(limitCount)
     );
 
-    return onSnapshot(q, (snapshot) => {
-        const notifications = snapshot.docs.map(doc => ({
+    const qBroadcast = query(
+        notificationsRef,
+        where('recipientId', '==', 'all'),
+        orderBy('createdAt', 'desc'),
+        limit(limitCount)
+    );
+
+    const unsubPrivate = onSnapshot(qPrivate, (snapshot) => {
+        privateNotifications = snapshot.docs.map(doc => ({
             id: doc.id,
             ...doc.data()
         }));
-        callback(notifications);
+        updateCallback();
     }, (error) => {
-        console.error("Error listening to notifications:", error);
-        callback([]);
+        console.error("Error listening to private notifications:", error);
     });
+
+    const unsubBroadcast = onSnapshot(qBroadcast, (snapshot) => {
+        broadcastNotifications = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        updateCallback();
+    }, (error) => {
+        // Broadcasts might fail if rules are very strict, but we shouldn't crash the whole system
+        if (error.code !== 'permission-denied') {
+            console.error("Error listening to broadcast notifications:", error);
+        }
+    });
+
+    return () => {
+        unsubPrivate();
+        unsubBroadcast();
+    };
 };
 
 /**

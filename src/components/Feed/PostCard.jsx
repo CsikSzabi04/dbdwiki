@@ -210,7 +210,7 @@ const PostCard = memo(({ post, isPriority = false }) => {
 
   return (
     <>
-      <div className={`p-3 sm:p-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors group relative ${showMenu ? 'z-[100]' : 'z-auto'}`}>
+      <div className={`render-opt p-3 sm:p-4 border-b border-white/5 hover:bg-white/[0.02] transition-colors group relative ${showMenu ? 'z-[100]' : 'z-auto'}`}>
         <div className="flex gap-3 sm:gap-4">
           {/* Author Avatar */}
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 flex-shrink-0 overflow-hidden">

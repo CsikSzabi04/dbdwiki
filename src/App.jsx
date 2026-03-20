@@ -19,6 +19,8 @@ const NewsPage = lazy(() => import('./pages/NewsPage'))
 const UserProfilePage = lazy(() => import('./pages/UserProfilePage'))
 const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const ExplorePage = lazy(() => import('./pages/ExplorePage'))
+const RoomsPage = lazy(() => import('./pages/RoomsPage'))
+const RoomDetailPage = lazy(() => import('./pages/RoomDetailPage'))
 
 const PageFallback = () => (
   <div className="flex items-center justify-center py-32">
@@ -42,6 +44,8 @@ const AnimatedRoutes = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/user/:userId" element={<UserProfilePage />} />
         <Route path="/builds" element={<BuildOn />} />
+        <Route path="/rooms" element={<RoomsPage />} />
+        <Route path="/room/:roomId" element={<RoomDetailPage />} />
         <Route path="/available-on" element={<AvailableOnPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

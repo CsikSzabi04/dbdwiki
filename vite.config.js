@@ -48,6 +48,10 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           // Firebase - large dependency, separate chunk
           'vendor-firebase': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+          // Animation library
+          'vendor-framer': ['framer-motion'],
+          // Icons
+          'vendor-icons': ['@heroicons/react']
         }
       }
     }

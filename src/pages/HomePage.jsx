@@ -33,7 +33,8 @@ const HomePage = () => {
     try {
       await createPost(newPostData);
       toast.success("Post published to the Fog!");
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       toast.error("Failed to publish post.");
     }
   };
@@ -49,7 +50,9 @@ const HomePage = () => {
         </div>
       </div>
 
-      <CreatePost onSubmit={handleCreatePost} />
+      <div className="hidden md:block">
+        <CreatePost onSubmit={handleCreatePost} />
+      </div>
 
       <div className="divide-y divide-white/5 pb-20">
         {isLoading ? (

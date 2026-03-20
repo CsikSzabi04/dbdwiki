@@ -177,21 +177,23 @@ const UserProfilePage = () => {
                 <div className="relative glass-card border border-white/10 rounded-b-2xl px-4 sm:px-6 md:px-10 pb-6 z-10 -mt-16 sm:-mt-20 md:-mt-24 pt-20 sm:pt-24 md:pt-28 shadow-2xl flex flex-col items-center md:items-start md:flex-row gap-4 sm:gap-6 md:gap-8">
 
                     {/* Avatar */}
-                    <div className="absolute -top-12 sm:-top-16 md:top-2 left-1/2 -translate-x-1/2 md:left-5 md:translate-x-0 z-50">
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 lg:w-40 md:h-36 lg:h-40 rounded-full bg-obsidian border-4 border-obsidian shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden">
+                    <div className="ter p-15 sm:p-20 md:p-0 lg:p-0 xl:p-0 absolute -top-12 sm:-top-16 md:top-2 left-1/2 -translate-x-1/2 md:left-5 md:translate-x-0 z-50">
+                        <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-36 lg:w-40 md:h-36 lg:h-40 rounded-full bg-obsidian border-4 border-obsidian shadow-[0_0_30px_rgba(0,0,0,0.5)] overflow-hidden relative group">
                             <img
+                                id="profile-cover"
                                 src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${userId}`}
                                 alt={displayName}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover relative z-10 transition-transform duration-500 group-hover:scale-110"
                             />
                         </div>
                         {/* Online indicator */}
-                        <div className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-slate-500 border-4 border-obsidian z-40"></div>
+                        <div className="potty absolute bottom-15 right-14 sm:bottom-20 sm:right-20 md:bottom-2 md:right-2 w-5 h-5 rounded-full bg-slate-500 border-4 border-obsidian shadow-[0_0_15px_rgba(100,116,139,0.6)] z-40"></div>
                     </div>
 
                     {/* Text info */}
-                    <div className="w-full pt-14 md:pt-0 md:pl-44 lg:pl-52 flex flex-col md:flex-row md:items-end justify-between gap-4">
-                        <div className="text-center md:text-left">
+                    <div className="nevter p-10 sm:p-13 md:p-0 lg:p-0 xl:p-0 flex flex-col md:flex-row md:items-end justify-between gap-4 md:gap-6 w-full">
+                        <div className="hidden md:block w-32 lg:w-36 h-2"></div>
+                        <div className="text-center md:text-left flex-1">
                             <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{displayName}</h1>
                             <p className="text-smoke text-sm mt-0.5">@{displayName.toLowerCase().replace(/\s+/g, '')}</p>
                             <p className="text-smoke text-sm mt-2 max-w-md italic">{bio}</p>

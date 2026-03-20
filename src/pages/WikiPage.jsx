@@ -15,6 +15,7 @@ const WikiPage = () => {
     const [activeTab, setActiveTab] = useState(location.state?.role || 'survivor');
     const [search, setSearch] = useState('');
     const [sortBy, setSortBy] = useState('name-asc'); // name-asc, name-desc, diff-asc, diff-desc
+    const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedCharacter, setSelectedCharacter] = useState(null); // New state for profile view
 
     useEffect(() => {
@@ -81,11 +82,22 @@ const WikiPage = () => {
 
                                 {/* Sort Dropdown */}
                                 <div className="relative group">
-                                    <button className="h-full px-4 bg-black/40 border border-white/10 rounded-xl flex items-center gap-2 hover:border-white/20 hover:bg-white/5 transition-colors">
-                                        <AdjustmentsHorizontalIcon className="w-5 h-5 text-smoke group-hover:text-dbd-red transition-colors" />
+                                    <button 
+                                        onClick={() => setIsSortOpen(!isSortOpen)}
+                                        className="h-full px-4 bg-black/40 border border-white/10 rounded-xl flex items-center gap-2 hover:border-white/20 hover:bg-white/5 transition-colors"
+                                    >
+                                        <AdjustmentsHorizontalIcon className={`w-5 h-5 text-smoke md:group-hover:text-dbd-red transition-colors ${isSortOpen ? 'text-dbd-red' : ''}`} />
                                         <span className="hidden sm:block text-xs font-bold uppercase tracking-widest text-smoke">Sort</span>
                                     </button>
-                                    <div className="absolute right-0 top-full mt-2 w-48 bg-obsidian-light border border-white/10 rounded-xl shadow-2xl overflow-hidden opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+
+                                    {isSortOpen && (
+                                        <div 
+                                            className="fixed inset-0 z-40" 
+                                            onClick={() => setIsSortOpen(false)}
+                                        />
+                                    )}
+
+                                    <div className={`absolute right-0 top-full mt-2 w-48 bg-[#0a0a0a] border border-white/10 rounded-xl shadow-2xl overflow-hidden transition-all z-50 ${isSortOpen ? 'opacity-100 visible' : 'opacity-0 invisible md:group-hover:opacity-100 md:group-hover:visible'}`}>
                                         <div className="p-1">
                                             {[
                                                 { id: 'name-asc', label: 'Name (A-Z)' },
@@ -95,7 +107,10 @@ const WikiPage = () => {
                                             ].map(option => (
                                                 <button
                                                     key={option.id}
-                                                    onClick={() => setSortBy(option.id)}
+                                                    onClick={() => {
+                                                        setSortBy(option.id);
+                                                        setIsSortOpen(false);
+                                                    }}
                                                     className={`w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors ${sortBy === option.id ? 'bg-dbd-red/20 text-dbd-red' : 'text-smoke hover:bg-white/5 hover:text-white'}`}
                                                 >
                                                     {option.label}

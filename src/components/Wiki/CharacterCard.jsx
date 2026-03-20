@@ -17,7 +17,7 @@ const CharacterCard = ({ character, onClick }) => {
     return (
         <div
             onClick={onClick}
-            className="group relative glass-card overflow-hidden cursor-pointer border border-white/5 hover:border-dbd-red/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(255,18,18,0.2)] bg-obsidian"
+            className="group relative glass-card overflow-hidden cursor-pointer border border-white/5 hover:border-dbd-red/50 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(255,18,18,0.2)] bg-obsidian render-opt"
         >
             {/* Role Badge */}
             <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[0.2em] shadow-lg z-10 backdrop-blur-md border ${isKiller ? 'bg-dbd-red/80 border-dbd-red text-white' : 'bg-blue-600/80 border-blue-500 text-white'

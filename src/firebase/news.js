@@ -22,8 +22,16 @@ const metadataRef = doc(db, 'system', 'news_metadata');
  */
 export const syncNewsWithFirestore = async (newsItems) => {
     try {
-        const promises = newsItems.map(item => {
+        let newCount = 0;
+        
+        const promises = newsItems.map(async (item) => {
             const docRef = doc(db, 'news', item.id);
+            const snap = await getDoc(docRef);
+            
+            if (!snap.exists()) {
+                newCount++;
+            }
+
             return setDoc(docRef, {
                 ...item,
                 syncedAt: serverTimestamp(),
@@ -37,7 +45,8 @@ export const syncNewsWithFirestore = async (newsItems) => {
             lastSyncTime: serverTimestamp()
         }, { merge: true });
 
-        console.log(`Successfully synced ${newsItems.length} news items to Firestore.`);
+        console.log(`Successfully synced ${newsItems.length} news items to Firestore. New items: ${newCount}`);
+        return newCount;
     } catch (error) {
         if (error.code === 'permission-denied') {
             console.warn("Guest user: Missing permission to sync news to Firestore. This is normal if not using the new rules.");

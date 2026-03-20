@@ -57,6 +57,25 @@
   }
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.animate-scaleUp {
+  animation: scaleUp 0.3s ease-out forwards;
+}
+
 /* Enhanced button styles */
 .btn-primary {
   @apply bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
@@ -143,4 +162,9 @@
     bottom: 10px !important;
     right: 10px !important;
   }
-}
+
+/* Performance Optimizations */
+.render-opt {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}}

@@ -10,7 +10,8 @@ import {
     BellIcon,
     ArrowLeftOnRectangleIcon,
     ArrowRightOnRectangleIcon,
-    MagnifyingGlassIcon
+    MagnifyingGlassIcon,
+    ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
@@ -47,6 +48,7 @@ const Sidebar = () => {
         { name: 'News', icon: NewspaperIcon, path: '/news' },
         { name: 'Wiki', icon: BookOpenIcon, path: '/wiki' },
         { name: 'Builds', icon: BeakerIcon, path: '/builds' },
+        { name: 'Discord Rooms', icon: ChatBubbleLeftRightIcon, path: '/rooms' },
         { name: 'Available On', icon: GlobeAltIcon, path: '/available-on' },
         { name: 'Profile', icon: UserIcon, path: '/profile', private: true },
     ];
@@ -54,11 +56,11 @@ const Sidebar = () => {
     return (
         <aside className="w-full h-screen flex flex-col">
             {/* Logo */}
-            <div className="p-4 lg:p-6 flex items-center justify-center lg:justify-start">
+            <div className="p-4 lg:p-6 flex items-center justify-center">
                 <img
                     src="/logo.png"
                     alt="Dead by Daylight Community"
-                    className="h-15 w-15 lg:h-36 lg:w-36 object-cover rounded-[100%]"
+                    className="h-15 w-15  lg:h-28 lg:w-28 object-cover rounded-[100%]"
                 />
             </div>
 
@@ -102,14 +104,15 @@ const Sidebar = () => {
                     className="block group"
                 >
                     <div className="flex items-center gap-3 mb-4">
+                        {/*
                         <img
                             src="https://images.steamusercontent.com/ugc/988989114488731806/4F7547A4CD93085C38217C96CEB0E879BE91C4F0/?imw=268&imh=268&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
                             alt="DBD Icon"
                             className=" lg:w-10 lg:h-10 w-16 h-16 object-contain"
                         />
-                        <span className="hidden lg:block font-bold uppercase tracking-widest text-sm text-white group-hover:text-dbd-red transition-colors">
+                       <span className="hidden lg:block font-bold uppercase tracking-widest text-sm text-white group-hover:text-dbd-red transition-colors">
                             Dead By <br /> Daylight
-                        </span>
+                        </span>*/}
 
                     </div>
                     <img

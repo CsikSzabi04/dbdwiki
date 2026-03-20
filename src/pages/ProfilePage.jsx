@@ -3,6 +3,7 @@ import { useAuth } from '../hooks/useAuth';
 import Layout from '../components/Layout/Layout';
 import PostCard from '../components/Feed/PostCard';
 import PostSkeleton from '../components/Feed/PostSkeleton';
+import AdminDashboard from '../components/Admin/AdminDashboard';
 import { subscribeToUserPosts, createPost } from '../firebase/posts';
 import { getUserBuilds } from '../firebase/users';
 import { getFollowStats } from '../firebase/follows';
@@ -211,7 +212,9 @@ const ProfilePage = () => {
         }
     };
 
+    const isAdmin = userProfile?.admin === true || user?.uid === 'm5bQpvVyXrhtTSvdmOA4rbeDsFb2';
     const tabs = ['Overview', 'My Posts', 'My Builds'];
+    if (isAdmin) tabs.push('Dashboard');
 
     return (
         <Layout>
@@ -481,6 +484,10 @@ const ProfilePage = () => {
                                 </div>
                             )}
                         </div>
+                    )}
+
+                    {activeTab === 'Dashboard' && isAdmin && (
+                        <AdminDashboard />
                     )}
                 </div>
             </div>
