@@ -44,7 +44,7 @@ const HomePage = () => {
   return (
     <Layout>
       <div className="sticky top-0 z-20 bg-obsidian/80 backdrop-blur-md border-b border-white/5 p-3 sm:p-4 flex items-center justify-between">
-        <h2 className="text-lg sm:text-xl font-bold uppercase tracking-widest text-white">Home</h2>
+        <h1 className="text-lg sm:text-xl font-bold uppercase tracking-tighter text-white">DBD <span className="text-dbd-red">Wiki</span> & <span className="text-dbd-red">Hub.</span></h1>
         <div className="flex gap-2 sm:gap-4">
           <button className="text-xs sm:text-sm font-bold pb-2 border-b-4 border-dbd-red transition-all">For You</button>
         </div>
