@@ -19,7 +19,7 @@
             "headers": [
                 {
                     "key": "Content-Security-Policy",
-                    "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.steampowered.com https://dbd.tricky.lol https://_vercel/insights/view; frame-src 'self' https://www.youtube.com https://youtube.com; object-src 'none';"
+                    "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob: *.wikia.nocookie.net *.steamstatic.com *.steamusercontent.com *.akamaihd.net *.googleusercontent.com *.dicebear.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.steampowered.com https://dbd.tricky.lol https://_vercel/insights/view; frame-src 'self' https://www.youtube.com https://youtube.com; object-src 'none';"
                 }
             ]
         }
