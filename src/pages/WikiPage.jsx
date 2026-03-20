@@ -67,7 +67,7 @@ const WikiPage = () => {
                 <div className="sticky top-0 z-30 bg-obsidian-light/80 backdrop-blur-xl border-b border-white/5 p-3 sm:p-4 shadow-xl">
                     <div className="max-w-[1600px] mx-auto">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-3 sm:mb-4">
-                            <h2 className="text-2xl sm:text-3xl font-black italic tracking-tighter drop-shadow-md">WIKI<span className="text-dbd-red">.</span></h2>
+                            <h1 className="text-2xl sm:text-3xl font-black italic tracking-tighter drop-shadow-md">DBD WIKI<span className="text-dbd-red">.</span></h1>
                             <div className="flex gap-2 w-full md:w-auto">
                                 <div className="relative flex-1 md:w-64">
                                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-smoke" />
