@@ -15,8 +15,11 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
 
+    // If it's a DBDMail username (no @), append the domain
+    const finalEmail = email.includes('@') ? email : `${email.trim().toLowerCase()}@dbdmail.com`;
+
     try {
-      await login(email, password);
+      await login(finalEmail, password);
       toast.success('Welcome back to the Fog');
       navigate('/');
     } catch (error) {
@@ -57,15 +60,15 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-xs font-bold uppercase tracking-widest text-smoke mb-2">
-                Email Address
+                DBDMail or Email
               </label>
               <input
-                type="email"
+                type="text"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-obsidian-light border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-dbd-red/50 transition-colors"
-                placeholder="survivor@entity.fog"
+                className="w-full bg-obsidian-light border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-dbd-red/50 transition-colors placeholder:opacity-30"
+                placeholder="username or email"
               />
             </div>
 

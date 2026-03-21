@@ -1,6 +1,6 @@
 import { initializeApp, deleteApp, getApps, getApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut } from 'firebase/auth';
-import { getFirestore, doc, setDoc, addDoc, collection, serverTimestamp, Timestamp, getDocs, query, where, arrayUnion, increment, writeBatch, terminate } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, memoryLocalCache, doc, setDoc, addDoc, collection, serverTimestamp, Timestamp, getDocs, query, where, arrayUnion, increment, writeBatch, terminate } from 'firebase/firestore';
 import { firebaseConfig } from '../firebase/config';
 import { botPostTexts } from '../data/posttextbot';
 
@@ -53,32 +53,33 @@ export const initBotApp = () => {
     const existingApp = getApps().find(a => a.name === 'BotAdminApp');
     if (existingApp) {
         botApp = existingApp;
+        botAuth = getAuth(botApp);
+        // botDb should ideally be reused too, but initializeFirestore can only be called once per app
+        // getFirestore(botApp) will return the instance if it exists
+        botDb = getFirestore(botApp);
     } else {
         botApp = initializeApp(firebaseConfig, 'BotAdminApp');
+        botAuth = getAuth(botApp);
+        // Use initializeFirestore to fix the "Unexpected State" error by using memory cache
+        // and ensuring the secondary app has its own isolated Firestore instance settings.
+        botDb = initializeFirestore(botApp, {
+            localCache: memoryLocalCache()
+        });
     }
-    botAuth = getAuth(botApp);
-    botDb = getFirestore(botApp);
 };
 
 /**
- * Cleanly terminates the secondary bot app after each operation.
- * This prevents the secondary Firestore WebSocket from interfering
- * with the main app's onSnapshot listeners.
+ * Cleanly terminates the secondary bot app session.
+ * We've disabled aggressive termination to avoid race conditions.
  */
 export const cleanupBotApp = async () => {
+    // Just sign out, keep the app/db instance alive as a singleton to avoid re-init crashes
     try {
-        if (botDb) {
-            await terminate(botDb);
-        }
-        if (botApp) {
-            await deleteApp(botApp);
+        if (botAuth) {
+            await signOut(botAuth);
         }
     } catch (e) {
         // ignore cleanup errors
-    } finally {
-        botApp = undefined;
-        botAuth = undefined;
-        botDb = undefined;
     }
 };
 
@@ -93,7 +94,7 @@ export const generateBotProfile = async () => {
     const randomNum = Math.floor(Math.random() * 9999);
 
     const displayName = `${firstName}${lastName}${randomNum}`;
-    const email = `${displayName.toLowerCase()}@gmail.com`;
+    const email = `${displayName.toLowerCase()}@dbdmail.com`;
     const password = BOT_PASSWORD;
     const photoURL = getRandomItem(allAvatars) || "https://api.dicebear.com/7.x/avataaars/svg?seed=bot";
 
@@ -122,7 +123,7 @@ export const generateBotProfile = async () => {
                 "I love the sound of a finishing generator.",
                 "GG WP everyone!",
                 "Hex: Devour Hope is my favorite perk.",
-                "Trying to reach Rank 1 this season.",
+
                 "Looping killers since day one.",
                 "Totems? What totems?",
                 "Just one more match…",

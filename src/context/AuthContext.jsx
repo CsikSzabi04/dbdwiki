@@ -43,8 +43,10 @@ export const AuthProvider = ({ children }) => {
     const signup = async (email, password, displayName) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        // Send email verification immediately
-        await sendEmailVerification(userCredential.user);
+        // Send email verification immediately (skip for dbdmail)
+        if (!email.toLowerCase().endsWith('@dbdmail.com')) {
+            await sendEmailVerification(userCredential.user);
+        }
 
         await updateProfile(userCredential.user, { displayName });
 
