@@ -5,6 +5,7 @@ import CharacterCard from '../components/Wiki/CharacterCard';
 import CharacterProfile from '../components/Wiki/CharacterProfile';
 import { MagnifyingGlassIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { useLocation, useNavigate } from 'react-router-dom';
+import useSEO from '../hooks/useSEO';
 
 const difficultyOrder = { 'Easy': 1, 'Intermediate': 2, 'Moderate': 2, 'Hard': 3, 'Very Hard': 4 };
 
@@ -17,6 +18,13 @@ const WikiPage = () => {
     const [sortBy, setSortBy] = useState('name-asc'); // name-asc, name-desc, diff-asc, diff-desc
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedCharacter, setSelectedCharacter] = useState(null); // New state for profile view
+
+    useSEO({
+        title: selectedCharacter ? selectedCharacter.name : 'The Archives',
+        description: selectedCharacter 
+            ? `Deep dive into ${selectedCharacter.name}'s lore, perks, and difficulty in Dead by Daylight.`
+            : 'Explore the complete Dead by Daylight character wiki. Stats, lore, and unique perks for every Killer and Survivor in the Fog.'
+    });
 
     useEffect(() => {
         if (!loading && characters.length > 0 && location.state?.characterName) {

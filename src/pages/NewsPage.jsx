@@ -3,8 +3,13 @@ import Layout from '../components/Layout/Layout';
 import NewsFeed from '../components/News/NewsFeed';
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from '@heroicons/react/24/solid';
 import { motion } from 'framer-motion';
+import useSEO from '../hooks/useSEO';
 
 const NewsPage = () => {
+    useSEO({
+        title: 'Latest News',
+        description: 'Stay updated with the latest Dead by Daylight news, patch notes, and dev updates from the Entity\'s Fog.'
+    });
     const videoRef = useRef(null);
     const [isMuted, setIsMuted] = useState(true);
     const [volume, setVolume] = useState(0.5);

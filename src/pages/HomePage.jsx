@@ -5,10 +5,16 @@ import PostCard from '../components/Feed/PostCard';
 import PostSkeleton from '../components/Feed/PostSkeleton';
 import { subscribeToPosts, createPost, loadMorePosts } from '../firebase/posts';
 import { toast } from 'react-hot-toast';
+import useSEO from '../hooks/useSEO';
 
 const EAGER_COUNT = 3; // First N posts render with full urgency
 
 const HomePage = () => {
+  useSEO({
+    title: 'Community Feed',
+    description: 'Join the trial! Share your DBD builds, discover the meta, and connect with the community on the ultimate Dead by Daylight fan hub.'
+  });
+
   const [allPosts, setAllPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
