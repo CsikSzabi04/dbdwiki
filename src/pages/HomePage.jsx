@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useTransition, useDeferredValue } from 'react';
+import React, { useState, useEffect, useTransition, useDeferredValue, useRef, useCallback } from 'react';
 import Layout from '../components/Layout/Layout';
 import CreatePost from '../components/Feed/CreatePost';
 import PostCard from '../components/Feed/PostCard';
 import PostSkeleton from '../components/Feed/PostSkeleton';
-import { subscribeToPosts, createPost } from '../firebase/posts';
+import { subscribeToPosts, createPost, loadMorePosts } from '../firebase/posts';
 import { toast } from 'react-hot-toast';
 
 const EAGER_COUNT = 3; // First N posts render with full urgency
@@ -11,10 +11,15 @@ const EAGER_COUNT = 3; // First N posts render with full urgency
 const HomePage = () => {
   const [allPosts, setAllPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
   const [, startTransition] = useTransition();
 
   // Deferred value for posts beyond the first EAGER_COUNT
   const deferredRest = useDeferredValue(allPosts.slice(EAGER_COUNT));
+
+  // Intersection observer ref for auto-load on scroll
+  const loadMoreRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = subscribeToPosts((updatedPosts) => {
@@ -25,9 +30,49 @@ const HomePage = () => {
       startTransition(() => {
         setAllPosts(updatedPosts);
       });
+      // Reset hasMore when live posts refresh
+      setHasMore(updatedPosts.length >= 8);
     });
     return () => unsubscribe();
   }, []);
+
+  const handleLoadMore = useCallback(async () => {
+    if (isLoadingMore || !hasMore || allPosts.length === 0) return;
+    setIsLoadingMore(true);
+    try {
+      const lastPost = allPosts[allPosts.length - 1];
+      const { posts: newPosts, hasMore: more } = await loadMorePosts(lastPost, 8);
+      if (newPosts.length > 0) {
+        setAllPosts(prev => {
+          // Deduplicate by id
+          const existing = new Set(prev.map(p => p.id));
+          return [...prev, ...newPosts.filter(p => !existing.has(p.id))];
+        });
+      }
+      setHasMore(more);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to load more posts.");
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, hasMore, allPosts]);
+
+  // Auto-load when the sentinel becomes visible
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isLoadingMore && !isLoading) {
+          handleLoadMore();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [handleLoadMore, hasMore, isLoadingMore, isLoading]);
 
   const handleCreatePost = async (newPostData) => {
     try {
@@ -69,6 +114,25 @@ const HomePage = () => {
             {deferredRest.map((post) => (
               <PostCard key={post.id} post={post} isPriority={false} />
             ))}
+
+            {/* Infinite scroll sentinel + Load More button */}
+            <div ref={loadMoreRef} className="py-6 flex flex-col items-center gap-3">
+              {isLoadingMore ? (
+                <div className="flex items-center gap-3 text-smoke text-xs font-bold uppercase tracking-widest">
+                  <div className="w-4 h-4 border-2 border-dbd-red/40 border-t-dbd-red rounded-full animate-spin" />
+                  Loading more...
+                </div>
+              ) : hasMore ? (
+                <button
+                  onClick={handleLoadMore}
+                  className="px-8 py-2.5 border border-white/10 bg-white/5 hover:bg-white/10 text-smoke hover:text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-colors"
+                >
+                  Load More
+                </button>
+              ) : (
+                <p className="text-smoke/40 text-xs uppercase tracking-widest italic">You've reached the end of the Fog.</p>
+              )}
+            </div>
           </>
         ) : (
           <div className="py-20 text-center">

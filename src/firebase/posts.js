@@ -14,7 +14,10 @@ import {
   arrayRemove,
   increment,
   where,
-  limit
+  limit,
+  Timestamp,
+  getDocs,
+  startAfter
 } from 'firebase/firestore';
 import { sanitizeInput } from '../utils/sanitize';
 import { createNotification } from './notifications';
@@ -100,8 +103,8 @@ export const togglePinPost = async (postId, currentPinStatus) => {
 export const subscribeToPosts = (callback) => {
   // Query 1: Fetch all currently pinned posts
   const pinnedQ = query(postsRef, where('isPinned', '==', true), orderBy('createdAt', 'desc'));
-  // Query 2: Fetch the 8 most recent posts
-  const recentQ = query(postsRef, orderBy('createdAt', 'desc'), limit(8));
+  // Query 2: Fetch the 8 most recent posts (excluding scheduled future posts)
+  const recentQ = query(postsRef, where('createdAt', '<=', Timestamp.now()), orderBy('createdAt', 'desc'), limit(8));
 
   let currentPinned = [];
   let currentRecent = [];
@@ -371,6 +374,44 @@ export const updatePost = async (postId, newContent) => {
     });
   } catch (error) {
     console.error("Error updating post: ", error);
+    throw error;
+  }
+};
+
+/**
+ * Loads additional posts after the given cursor document (for pagination).
+ */
+export const loadMorePosts = async (lastVisiblePost, pageSize = 8) => {
+  try {
+    const lastDocRef = doc(db, 'posts', lastVisiblePost.id);
+    const lastDocSnap = await getDoc(lastDocRef);
+
+    const q = query(
+      postsRef,
+      where('createdAt', '<=', Timestamp.now()),
+      orderBy('createdAt', 'desc'),
+      startAfter(lastDocSnap),
+      limit(pageSize)
+    );
+
+    const snapshot = await getDocs(q);
+    const posts = [];
+
+    for (const postDoc of snapshot.docs) {
+      const data = postDoc.data();
+      const authorInfo = await getLatestAuthorData(data.authorId);
+      posts.push({
+        id: postDoc.id,
+        ...data,
+        authorName: authorInfo?.name || data.authorName,
+        authorAvatar: authorInfo?.avatar || data.authorAvatar,
+        createdAt: data.createdAt?.toDate?.()?.toISOString() || new Date().toISOString()
+      });
+    }
+
+    return { posts, hasMore: snapshot.docs.length === pageSize };
+  } catch (error) {
+    console.error("Error loading more posts: ", error);
     throw error;
   }
 };

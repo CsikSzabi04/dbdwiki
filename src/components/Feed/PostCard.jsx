@@ -214,12 +214,12 @@ const PostCard = memo(({ post, isPriority = false }) => {
         <div className="flex gap-3 sm:gap-4">
           {/* Author Avatar */}
           <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-slate-700 to-slate-900 border border-white/10 flex-shrink-0 overflow-hidden">
-            {post.authorAvatar ? (
+            {(post.authorAvatar || post.authorPhoto) ? (
               <img
                 loading={isPriority ? "eager" : "lazy"}
                 fetchPriority={isPriority ? "high" : "auto"}
                 decoding={isPriority ? "sync" : "async"}
-                src={post.authorAvatar}
+                src={post.authorAvatar || post.authorPhoto}
                 alt={post.authorName}
                 className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
               />

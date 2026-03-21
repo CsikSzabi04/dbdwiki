@@ -21,6 +21,8 @@ const NotificationsPage = lazy(() => import('./pages/NotificationsPage'))
 const ExplorePage = lazy(() => import('./pages/ExplorePage'))
 const RoomsPage = lazy(() => import('./pages/RoomsPage'))
 const RoomDetailPage = lazy(() => import('./pages/RoomDetailPage'))
+const BotAdminLogin = lazy(() => import('./pages/BotAdminLogin'))
+const BotAdminDashboard = lazy(() => import('./pages/BotAdminDashboard'))
 
 const PageFallback = () => (
   <div className="flex items-center justify-center py-32">
@@ -47,6 +49,10 @@ const AnimatedRoutes = () => {
         <Route path="/rooms" element={<RoomsPage />} />
         <Route path="/room/:roomId" element={<RoomDetailPage />} />
         <Route path="/available-on" element={<AvailableOnPage />} />
+        
+        {/* Classified AI Bot Admin Panel */}
+        <Route path="/botadmin04" element={<BotAdminLogin />} />
+        <Route path="/botadmin04/dashboard" element={<BotAdminDashboard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>

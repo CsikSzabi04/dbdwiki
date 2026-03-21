@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getAdminStats } from '../../firebase/admin';
 import { 
   UsersIcon, 
@@ -57,6 +58,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [chartType, setChartType] = useState('area'); // 'area' or 'bar'
@@ -104,12 +106,20 @@ const AdminDashboard = () => {
           </h2>
           <p className="text-xs text-smoke uppercase tracking-widest mt-1">Platform Statistics</p>
         </div>
-        <button 
-          onClick={fetchStats}
-          className="p-2 border border-white/10 bg-black/40 hover:bg-white/5 rounded-xl transition-colors group tooltip-trigger"
-        >
-          <ArrowPathIcon className="w-5 h-5 text-smoke group-hover:text-white group-hover:rotate-180 transition-all duration-500" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate('/botadmin04')}
+            className="px-3 py-1.5 border border-dbd-red/30 bg-black/40 hover:bg-dbd-red/20 text-smoke hover:text-white text-[10px] font-bold uppercase tracking-widest rounded-xl transition-colors shadow-sm"
+          >
+            bot
+          </button>
+          <button 
+            onClick={fetchStats}
+            className="p-2 border border-white/10 bg-black/40 hover:bg-white/5 rounded-xl transition-colors group tooltip-trigger"
+          >
+            <ArrowPathIcon className="w-5 h-5 text-smoke group-hover:text-white group-hover:rotate-180 transition-all duration-500" />
+          </button>
+        </div>
       </div>
 
       {/* Stats Grid */}
