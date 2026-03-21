@@ -19,7 +19,7 @@
             "headers": [
                 {
                     "key": "Content-Security-Policy",
-                    "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob: *.wikia.nocookie.net *.steamstatic.com *.steamusercontent.com *.akamaihd.net *.googleusercontent.com *.dicebear.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://api.steampowered.com https://dbd.tricky.lol; frame-src 'self' https://www.youtube.com https://youtube.com; object-src 'none';"
+                    "value": "default-src 'self'; script-src 'self' https://va.vercel-scripts.com; style-src 'self' https://fonts.googleapis.com; img-src 'self' data: blob: https://static.wikia.nocookie.net https://vignette.wikia.nocookie.net https://cdn.akamai.steamstatic.com https://shared.akamai.steamstatic.com https://avatars.steamstatic.com https://steamcdn-a.akamaihd.net https://shared.fastly.steamstatic.com https://lh3.googleusercontent.com https://yt3.googleusercontent.com https://api.dicebear.com https://dbd.tricky.lol; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://dbd.tricky.lol; frame-src 'self' https://player.twitch.tv; object-src 'none';"
                 }
             ]
         }
