@@ -12,5 +12,16 @@
             "path": "/api/sync",
             "schedule": "0 0 * * *"
         }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Content-Security-Policy",
+                    "value": "default-src 'self'; script-src 'self' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src * data: blob:; font-src 'self' https://fonts.gstatic.com; connect-src *; frame-src *; object-src 'none';"
+                }
+            ]
+        }
     ]
 }
