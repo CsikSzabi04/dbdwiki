@@ -17,6 +17,9 @@ export const useNews = () => {
     useEffect(() => {
         let isMounted = true;
 
+        // Trigger background sync to ensure fresh news. Will throttle server-side if already fresh.
+        fetch('/api/sync').catch(err => console.debug("Local sync attempt skipped", err));
+
         // Subscribe to real-time news updates from Firestore
         const unsubscribe = subscribeToNews((firestoreNews) => {
             if (!isMounted) return;

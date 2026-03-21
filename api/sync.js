@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, doc, setDoc, getDoc, serverTimestamp, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, doc, setDoc, getDoc, getDocs, writeBatch, serverTimestamp } from 'firebase/firestore';
 
 // Initialize Firebase for the serverless function environment
 const firebaseConfig = {
@@ -15,12 +15,35 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 export default async function handler(req, res) {
-    // Only allow GET requests (standard for Cron)
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
     try {
+        const metadataRef = doc(db, 'system', 'news_metadata');
+        const metaSnap = await getDoc(metadataRef);
+        
+        let lastSyncTimeMs = 0;
+        if (metaSnap.exists()) {
+            const data = metaSnap.data();
+            if (data.lastSyncTime) {
+                if (typeof data.lastSyncTime.toDate === 'function') {
+                    lastSyncTimeMs = data.lastSyncTime.toDate().getTime();
+                } else if (data.lastSyncTime.seconds) {
+                    lastSyncTimeMs = data.lastSyncTime.seconds * 1000;
+                }
+            }
+        }
+        
+        const nowMs = Date.now();
+        const minutesSinceSync = (nowMs - lastSyncTimeMs) / 1000 / 60;
+        
+        // Prevent aggressive syncs (cooldown 10 mins)
+        if (minutesSinceSync < 10) {
+            console.log('Skipping Stream API sync, recent sync exists.');
+            return res.status(200).json({ status: 'cached', message: 'News is already fresh and synced.' });
+        }
+
         console.log('Starting automated news sync...');
 
         // 1. Fetch news from Steam API
@@ -52,7 +75,6 @@ export default async function handler(req, res) {
         // 3. Sync with Firestore
         let newCount = 0;
         const newsRef = collection(db, 'news');
-        const metadataRef = doc(db, 'system', 'news_metadata');
 
         for (const item of newsItems) {
             const docRef = doc(db, 'news', item.id);
@@ -73,12 +95,17 @@ export default async function handler(req, res) {
             }
         }
 
-        // 4. Create Broadcast Notification if new items found
+        // 4. Create Broadcast Notification for all users individually if new items found
         if (newCount > 0) {
-            console.log(`New news detected: ${newCount}. Creating broadcast notification.`);
-            const notificationsRef = collection(db, 'notifications');
-            await addDoc(notificationsRef, {
-                recipientId: 'all',
+            console.log(`New news detected: ${newCount}. Creating notifications for all users individually.`);
+            const usersRef = collection(db, 'users');
+            const usersSnap = await getDocs(usersRef);
+            
+            const batches = [];
+            let currentBatch = writeBatch(db);
+            let operationCount = 0;
+            
+            const notificationBase = {
                 senderId: 'system',
                 senderName: 'The Fog',
                 senderAvatar: '/logo.png',
@@ -86,7 +113,29 @@ export default async function handler(req, res) {
                 text: `${newCount} new transmission${newCount > 1 ? 's' : ''} from the Entity. Check the News section.`,
                 read: false,
                 createdAt: new Date().toISOString()
+            };
+
+            usersSnap.forEach((userDoc) => {
+                const notifRef = doc(collection(db, 'notifications'));
+                currentBatch.set(notifRef, {
+                    ...notificationBase,
+                    recipientId: userDoc.id
+                });
+                operationCount++;
+                
+                if (operationCount === 450) { // Limit is 500, we use 450 to be safe
+                    batches.push(currentBatch.commit());
+                    currentBatch = writeBatch(db);
+                    operationCount = 0;
+                }
             });
+            
+            if (operationCount > 0) {
+                batches.push(currentBatch.commit());
+            }
+            
+            await Promise.all(batches);
+            console.log(`Notifications customized individually for ${usersSnap.size} users.`);
         }
 
         // 5. Update global sync metadata

@@ -39,6 +39,12 @@ const NotificationItem = ({ notification }) => {
             message = "started following you.";
             link = `/user/${notification.senderId}`;
             break;
+        case 'news':
+            Icon = BellIcon;
+            iconColor = "text-dbd-red";
+            message = "broadcasted a new transmission.";
+            link = "/news";
+            break;
     }
 
     const timeAgo = (dateStr) => {

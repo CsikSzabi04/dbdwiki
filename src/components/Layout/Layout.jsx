@@ -70,7 +70,7 @@ const Layout = ({ children }) => {
                 </main>
 
                 {/* Right Sidebar (Hidden on small screens) */}
-                <aside className="hidden xl:block w-[400px] h-screen sticky top-0 px-6 py-4 overflow-y-auto custom-scrollbar shrink-0">
+                <aside className="hidden xl:block w-[400px] h-screen sticky top-0 px-6 py-4 overflow-hidden shrink-0">
                     <CommunityLegends />
                 </aside>
 

@@ -35,7 +35,15 @@ const stripHtmlAndTruncate = (htmlString, maxLength) => {
 
 const formatDate = (dateString) => {
     try {
-        const date = new Date(dateString);
+        let timestamp = dateString;
+        // Steam sends UNIX timestamp in seconds (10 digits). Convert to milliseconds.
+        if (typeof dateString === 'number' && dateString < 10000000000) {
+            timestamp = dateString * 1000;
+        } else if (typeof dateString === 'string' && /^\d{10}$/.test(dateString)) {
+            timestamp = parseInt(dateString, 10) * 1000;
+        }
+        
+        const date = new Date(timestamp);
         return date.toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
