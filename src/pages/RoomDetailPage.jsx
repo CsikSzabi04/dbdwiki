@@ -355,8 +355,8 @@ const RoomDetailPage = () => {
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-black tracking-widest opacity-80 decoration-blue-500/30">Discord Server</p>
-                                                <a href="https://discord.gg/UF7FKmTg" target="_blank" rel="noopener noreferrer" className="font-bold text-sm sm:text-base hover:text-white hover:underline transition-colors block">
-                                                    https://discord.gg/UF7FKmTg
+                                                <a href="https://discord.gg/6AksV9UxZ6" target="_blank" rel="noopener noreferrer" className="font-bold text-sm sm:text-base hover:text-white hover:underline transition-colors block">
+                                                    https://discord.gg/6AksV9UxZ6
                                                 </a>
                                             </div>
                                         </div>
