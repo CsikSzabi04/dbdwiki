@@ -355,13 +355,13 @@ const RoomDetailPage = () => {
                                             </div>
                                             <div>
                                                 <p className="text-[10px] uppercase font-black tracking-widest opacity-80 decoration-blue-500/30">Discord Server</p>
-                                                <a href="https://discord.gg/6AksV9UxZ6" target="_blank" rel="noopener noreferrer" className="font-bold text-sm sm:text-base hover:text-white hover:underline transition-colors block">
-                                                    https://discord.gg/6AksV9UxZ6
+                                                <a href="https://discord.gg/wytuSzf8Zq" target="_blank" rel="noopener noreferrer" className="font-bold text-sm sm:text-base hover:text-white hover:underline transition-colors block">
+                                                    https://discord.gg/wytuSzf8Zq
                                                 </a>
                                             </div>
                                         </div>
                                         
-                                        <a href="https://discord.gg/UF7FKmTg" target="_blank" rel="noopener noreferrer" className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black uppercase tracking-widest px-4 py-2.5 rounded-xl border border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all hover:scale-105 active:scale-95 text-center w-full sm:w-auto">
+                                        <a href="https://discord.gg/wytuSzf8Zq" target="_blank" rel="noopener noreferrer" className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black uppercase tracking-widest px-4 py-2.5 rounded-xl border border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all hover:scale-105 active:scale-95 text-center w-full sm:w-auto">
                                             Csatlakozás Discordhoz
                                         </a>
                                     </div>
