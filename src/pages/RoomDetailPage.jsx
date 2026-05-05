@@ -2,21 +2,21 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout/Layout';
 import { useAuth } from '../hooks/useAuth';
-import { 
-    subscribeToRoom, 
-    subscribeToRoomMessages, 
-    joinRoom, 
-    leaveRoom, 
+import {
+    subscribeToRoom,
+    subscribeToRoomMessages,
+    joinRoom,
+    leaveRoom,
     sendRoomMessage,
     updateRoomPassword,
     deleteRoom
 } from '../firebase/rooms';
 import { toast } from 'react-hot-toast';
-import { 
-    PaperAirplaneIcon, 
-    ArrowLeftIcon, 
-    MicrophoneIcon, 
-    InformationCircleIcon, 
+import {
+    PaperAirplaneIcon,
+    ArrowLeftIcon,
+    MicrophoneIcon,
+    InformationCircleIcon,
     UserIcon,
     ExclamationTriangleIcon,
     LockClosedIcon,
@@ -37,13 +37,13 @@ const RoomDetailPage = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { user, userProfile } = useAuth();
-    
+
     const [room, setRoom] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [joining, setJoining] = useState(false);
-    
+
     // Privacy / Password state
     const [isLockedOut, setIsLockedOut] = useState(false);
     const [joinPasswordInput, setJoinPasswordInput] = useState('');
@@ -54,7 +54,7 @@ const RoomDetailPage = () => {
     const [settingsPassword, setSettingsPassword] = useState('');
     const [isSettingsPrivate, setIsSettingsPrivate] = useState(false);
     const [isSavingSettings, setIsSavingSettings] = useState(false);
-    
+
     const messagesEndRef = useRef(null);
 
     // Parse invite code from URL parameters
@@ -75,13 +75,13 @@ const RoomDetailPage = () => {
                 navigate('/rooms');
                 return;
             }
-            
+
             setRoom(roomData);
             setLoading(false);
-            
+
             // Check if current user is implicitly in the room
             const isMember = roomData.players?.some(p => p.uid === user.uid);
-            
+
             if (!isMember && !joining && !isLockedOut) {
                 setJoining(true); // prevent infinite loop calls
                 try {
@@ -129,7 +129,7 @@ const RoomDetailPage = () => {
 
         // Window unload behavior
         window.addEventListener('beforeunload', handleBeforeUnload);
-        
+
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
             // In React Development StrictMode, components eagerly unmount and remount.
@@ -158,7 +158,7 @@ const RoomDetailPage = () => {
             await joinRoom(roomId, user, userProfile, joinPasswordInput.trim());
             toast.success("Password correct!");
             setIsLockedOut(false);
-        } catch(error) {
+        } catch (error) {
             if (error.message === "INVALID_PASSWORD") {
                 toast.error("Helytelen jelszó!"); // Request from user to display incorrect password in hungarian
             } else {
@@ -172,10 +172,10 @@ const RoomDetailPage = () => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!newMessage.trim() || !user || !room) return;
-        
+
         const text = newMessage;
         setNewMessage('');
-        
+
         try {
             await sendRoomMessage(roomId, user, userProfile, text);
         } catch (err) {
@@ -219,7 +219,7 @@ const RoomDetailPage = () => {
             await updateRoomPassword(roomId, user.uid, finalPassword);
             toast.success("Room security updated.");
             setIsSettingsOpen(false);
-        } catch(err) {
+        } catch (err) {
             console.error(err);
             toast.error("Failed to update settings.");
         } finally {
@@ -233,7 +233,7 @@ const RoomDetailPage = () => {
                 await deleteRoom(roomId, user.uid);
                 toast.success("Room deleted.");
                 navigate('/rooms');
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 toast.error("Failed to delete.");
             }
@@ -249,7 +249,7 @@ const RoomDetailPage = () => {
             </Layout>
         );
     }
-    
+
     if (!room) return null;
 
     const isHost = room.hostId === user?.uid;
@@ -266,9 +266,9 @@ const RoomDetailPage = () => {
                         <p className="text-smoke text-sm mb-6 pb-4 border-b border-white/5 truncate">
                             {room.name}
                         </p>
-                        
+
                         <form onSubmit={handlePasswordSubmit}>
-                            <input 
+                            <input
                                 type="text"
                                 value={joinPasswordInput}
                                 onChange={e => setJoinPasswordInput(e.target.value)}
@@ -293,7 +293,7 @@ const RoomDetailPage = () => {
     return (
         <Layout>
             <div className="max-w-7xl mx-auto p-2 sm:p-4 lg:p-6 animate-fade-in flex flex-col h-[calc(100vh-80px)] sm:h-[calc(100vh-64px)]">
-                
+
                 {/* Top Nav (Back & Title) */}
                 <div className="flex flex-col sm:flex-row items-center justify-between bg-obsidian border-b border-white/5 py-4 px-2 sm:px-6 mb-4 rounded-xl shadow-lg shrink-0 gap-4 sm:gap-0">
                     <div className="flex items-center w-full sm:w-auto justify-between sm:justify-start gap-4">
@@ -313,7 +313,7 @@ const RoomDetailPage = () => {
                             </h1>
                         </div>
                     </div>
-                    
+
                     <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto custom-scrollbar pb-1 sm:pb-0">
                         {isHost && (
                             <div className="text-[9px] sm:text-[10px] shrink-0 font-black uppercase tracking-widest text-dbd-red bg-dbd-red/10 px-3 py-2 rounded-lg border border-dbd-red/20">
@@ -321,13 +321,13 @@ const RoomDetailPage = () => {
                             </div>
                         )}
                         <button onClick={handleCopyInvite} className="flex shrink-0 items-center justify-center gap-1.5 px-3 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors border border-blue-500/20">
-                            <LinkIcon className="w-4 h-4" /> 
+                            <LinkIcon className="w-4 h-4" />
                             <span className="hidden sm:inline">Meghívó Link</span>
                             <span className="sm:hidden">Meghívó</span>
                         </button>
                         {isHost && (
                             <button onClick={openSettings} className="flex shrink-0 items-center justify-center gap-1.5 px-3 py-2 bg-white/5 hover:bg-white/10 text-smoke hover:text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors border border-white/5">
-                                <Cog6ToothIcon className="w-4 h-4" /> 
+                                <Cog6ToothIcon className="w-4 h-4" />
                                 <span className="hidden sm:inline">Beállítások</span>
                                 <span className="sm:hidden">Beáll.</span>
                             </button>
@@ -336,17 +336,17 @@ const RoomDetailPage = () => {
                 </div>
 
                 <div className="flex flex-col lg:flex-row gap-6 flex-1 overflow-hidden">
-                    
+
                     {/* Main Chat Area */}
                     <div className="flex-1 glass-card border flex flex-col border-white/10 rounded-2xl overflow-hidden shadow-2xl relative order-2 lg:order-1 h-full max-h-full">
-                        
+
                         {/* Messages Area */}
                         <div className="flex-1 overflow-y-auto custom-scrollbar bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-                            
+
                             {/* Pinned Server Information (Now scrolls with chat to support small screens) */}
                             <div className="bg-obsidian-light/90 border-b border-white/10 p-4 sm:p-6 shrink-0 relative overflow-hidden backdrop-blur-xl mb-4">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-dbd-red rounded-full opacity-10 blur-[50px] pointer-events-none"></div>
-                                
+
                                 <div className="flex flex-col gap-4 relative z-10">
                                     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                                         <div className="flex items-center gap-2 text-blue-400">
@@ -360,7 +360,7 @@ const RoomDetailPage = () => {
                                                 </a>
                                             </div>
                                         </div>
-                                        
+
                                         <a href="https://discord.gg/wytuSzf8Zq" target="_blank" rel="noopener noreferrer" className="shrink-0 bg-blue-600 hover:bg-blue-500 text-white text-xs font-black uppercase tracking-widest px-4 py-2.5 rounded-xl border border-blue-400/50 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all hover:scale-105 active:scale-95 text-center w-full sm:w-auto">
                                             Csatlakozás Discordhoz
                                         </a>
@@ -387,46 +387,46 @@ const RoomDetailPage = () => {
                             <div className="px-4 pb-4 sm:px-6 sm:pb-6 space-y-4">
                                 {messages.length === 0 ? (
                                     <div className="py-12 flex flex-col items-center justify-center opacity-40">
-                                    <HiFire className="w-12 h-12 text-smoke mb-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
-                                    <p className="text-smoke text-sm font-bold italic tracking-wide">The campfire is quiet. Say something.</p>
-                                </div>
-                            ) : (
-                                messages.map((msg, index) => {
-                                    const isMe = msg.uid === user.uid;
-                                    const showAvatar = index === 0 || messages[index - 1].uid !== msg.uid;
-                                    return (
-                                        <div 
-                                            key={msg.id} 
-                                            className={`animate-fade-in flex gap-3 ${isMe ? 'flex-row-reverse' : 'flex-row'} items-end`}
-                                        >
-                                            {showAvatar ? (
-                                                <div className="w-8 h-8 rounded-lg bg-obsidian border border-white/10 overflow-hidden shrink-0 shadow-xl self-end mb-1">
-                                                    <img src={msg.photoURL} alt={msg.displayName} className="w-full h-full object-cover" />
-                                                </div>
-                                            ) : (
-                                                <div className="w-8 h-8 shrink-0"></div>
-                                            )}
-                                            
-                                            <div className={`flex flex-col max-w-[75%] sm:max-w-[65%] ${isMe ? 'items-end' : 'items-start'}`}>
-                                                {showAvatar && (
-                                                    <span className={`text-[9px] uppercase tracking-widest font-black mb-1 opacity-60 ${isMe ? 'text-dbd-red' : 'text-smoke'}`}>
-                                                        {msg.displayName}
-                                                    </span>
+                                        <HiFire className="w-12 h-12 text-smoke mb-4 drop-shadow-[0_0_10px_rgba(255,255,255,0.2)]" />
+                                        <p className="text-smoke text-sm font-bold italic tracking-wide">The campfire is quiet. Say something.</p>
+                                    </div>
+                                ) : (
+                                    messages.map((msg, index) => {
+                                        const isMe = msg.uid === user.uid;
+                                        const showAvatar = index === 0 || messages[index - 1].uid !== msg.uid;
+                                        return (
+                                            <div
+                                                key={msg.id}
+                                                className={`animate-fade-in flex gap-3 ${isMe ? 'flex-row-reverse' : 'flex-row'} items-end`}
+                                            >
+                                                {showAvatar ? (
+                                                    <div className="w-8 h-8 rounded-lg bg-obsidian border border-white/10 overflow-hidden shrink-0 shadow-xl self-end mb-1">
+                                                        <img src={msg.photoURL} alt={msg.displayName} className="w-full h-full object-cover" />
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-8 h-8 shrink-0"></div>
                                                 )}
-                                                <div className={`
+
+                                                <div className={`flex flex-col max-w-[75%] sm:max-w-[65%] ${isMe ? 'items-end' : 'items-start'}`}>
+                                                    {showAvatar && (
+                                                        <span className={`text-[9px] uppercase tracking-widest font-black mb-1 opacity-60 ${isMe ? 'text-dbd-red' : 'text-smoke'}`}>
+                                                            {msg.displayName}
+                                                        </span>
+                                                    )}
+                                                    <div className={`
                                                     p-3 sm:px-4 sm:py-2.5 rounded-2xl text-sm leading-relaxed backdrop-blur-md relative shadow-lg break-words w-full text-left
-                                                    ${isMe 
-                                                        ? 'bg-dbd-red text-white rounded-br-sm border border-red-500 border-opacity-50' 
-                                                        : 'bg-white/10 text-gray-200 border border-white/5 rounded-bl-sm'}
+                                                    ${isMe
+                                                            ? 'bg-dbd-red text-white rounded-br-sm border border-red-500 border-opacity-50'
+                                                            : 'bg-white/10 text-gray-200 border border-white/5 rounded-bl-sm'}
                                                 `}>
-                                                    <span dangerouslySetInnerHTML={{ __html: msg.text }}></span>
+                                                        <span dangerouslySetInnerHTML={{ __html: msg.text }}></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    );
-                                })
-                            )}
-                            <div ref={messagesEndRef} />
+                                        );
+                                    })
+                                )}
+                                <div ref={messagesEndRef} />
                             </div>
                         </div>
 
@@ -434,7 +434,7 @@ const RoomDetailPage = () => {
                         <form onSubmit={handleSendMessage} className="p-3 sm:p-4 bg-obsidian-light/60 border-t border-white/10 shrink-0">
                             <div className="flex items-center gap-2">
                                 <div className="flex-1 bg-black/50 border border-white/10 rounded-xl overflow-hidden flex items-center shadow-inner hover:border-white/20 transition-colors focus-within:border-white/30 focus-within:ring-2 focus-within:ring-dbd-red/30 pl-4 py-1">
-                                    <input 
+                                    <input
                                         type="text"
                                         value={newMessage}
                                         onChange={(e) => setNewMessage(e.target.value)}
@@ -442,8 +442,8 @@ const RoomDetailPage = () => {
                                         className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-white text-sm"
                                         maxLength={500}
                                     />
-                                    <button 
-                                        type="submit" 
+                                    <button
+                                        type="submit"
                                         disabled={!newMessage.trim()}
                                         className="p-3 bg-dbd-red text-white m-1 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:hover:bg-dbd-red transition-all cursor-pointer shadow-[0_0_10px_rgba(236,72,153,0.3)] disabled:shadow-none font-bold group"
                                     >
@@ -502,19 +502,19 @@ const RoomDetailPage = () => {
             <AnimatePresence>
                 {isSettingsOpen && (
                     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             onClick={() => setIsSettingsOpen(false)}
                             className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                         />
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
                             className="relative bg-obsidian-light border border-white/10 p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md"
                         >
                             <button onClick={() => setIsSettingsOpen(false)} className="absolute top-4 right-4 p-2 text-smoke hover:text-white hover:bg-white/5 rounded-full transition-colors">
                                 <XMarkIcon className="w-5 h-5" />
                             </button>
-                            
+
                             <h2 className="text-xl font-black text-white uppercase tracking-widest mb-6 border-b border-white/5 pb-4">
                                 Server Settings
                             </h2>
@@ -556,7 +556,7 @@ const RoomDetailPage = () => {
                                     <button type="submit" disabled={isSavingSettings || (isSettingsPrivate && !settingsPassword.trim())} className="w-full flex justify-center py-3.5 bg-dbd-red text-white uppercase tracking-widest text-sm font-black rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50">
                                         {isSavingSettings ? 'Saving...' : 'Save Settings'}
                                     </button>
-                                    
+
                                     <button type="button" onClick={handleDeleteRoom} className="w-full flex justify-center items-center gap-2 py-3 bg-red-900/20 hover:bg-red-900/40 text-red-500 uppercase tracking-widest text-xs font-bold rounded-xl transition-colors border border-red-500/20">
                                         <TrashIcon className="w-4 h-4" /> Delete Server Permanently
                                     </button>
